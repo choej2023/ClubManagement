@@ -19,6 +19,10 @@ namespace ClubManagement
         public MainWindow()
         {
             InitializeComponent();
+            
+
         }
+        
+
     }
 }
