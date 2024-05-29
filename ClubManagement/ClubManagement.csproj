@@ -10,10 +10,12 @@
 
   <ItemGroup>
     <None Remove="Resources\kumohImg.jpg" />
+    <None Remove="Resources\soccerball.jpg" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Resources\kumohImg.jpg" />
+    <Resource Include="Resources\soccerball.jpg" />
   </ItemGroup>
 
   <ItemGroup>
