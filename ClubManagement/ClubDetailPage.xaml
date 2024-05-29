@@ -6,49 +6,36 @@
         xmlns:local="clr-namespace:ClubManagement"
         mc:Ignorable="d"
         Title="ClubDetailPage" Height="450" Width="800">
-    <Grid>
-        <Grid.ColumnDefinitions>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="60px"/>
-            <RowDefinition Height="*"/>
-            
-        </Grid.RowDefinitions>
+	<Grid>
+		<Grid.ColumnDefinitions>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="60px"/>
+			<RowDefinition Height="*"/>
 
-        <Border Grid.Row="0" BorderThickness="0,0,0,1" BorderBrush="Gray">
-            <Grid>
-                
-                    <Image Source="/Resources/kumohImg.jpg" HorizontalAlignment="Left"/>
-                
-                
-                <Menu Grid.Row="0" VerticalAlignment="Top" FontSize="16" Height="60" Margin="70,0,61,0" Background="Transparent">
-                    <Menu.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <UniformGrid Columns="4"/>
-                        </ItemsPanelTemplate>
-                    </Menu.ItemsPanel>
-                    <MenuItem Header="게시글" FontSize="16" HorizontalAlignment="Center">
-                        <!-- 게시글 관련 기능 추가 -->
-                    </MenuItem>
-                    <MenuItem Header="부원 관리" FontSize="16" HorizontalAlignment="Center">
-                        <!-- 부원 관리 관련 기능 추가 -->
-                    </MenuItem>
-                    <MenuItem Header="수정" FontSize="16" HorizontalAlignment="Center">
-                        <!-- 수정 기능 추가 -->
-                    </MenuItem>
-                    <MenuItem Header="삭제" FontSize="16" HorizontalAlignment="Center">
-                        <!-- 삭제 기능 추가 -->
-                    </MenuItem>
-                </Menu>
-                <Button Width="80" Content="뒤로 가기" HorizontalAlignment="Right" Background="Transparent">
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="30"/>
-                        </Style>
-                    </Button.Resources>
-                </Button>
-                
-            </Grid>
-        </Border>
-    </Grid>
+		</Grid.RowDefinitions>
+
+		<Grid>
+			<Menu Grid.Row="0" VerticalAlignment="Top" FontSize="16" Height="60" Margin="70,0,61,0">
+				<Menu.ItemsPanel>
+					<ItemsPanelTemplate>
+						<UniformGrid Columns="4"/>
+					</ItemsPanelTemplate>
+				</Menu.ItemsPanel>
+				<MenuItem Header="게시글" FontSize="16" HorizontalAlignment="Center">
+					<!-- 게시글 관련 기능 추가 -->
+				</MenuItem>
+				<MenuItem Header="부원 관리" FontSize="16" HorizontalAlignment="Center">
+					<!-- 부원 관리 관련 기능 추가 -->
+				</MenuItem>
+				<MenuItem Header="수정" FontSize="16" HorizontalAlignment="Center">
+					<!-- 수정 기능 추가 -->
+				</MenuItem>
+				<MenuItem Header="삭제" FontSize="16" HorizontalAlignment="Center">
+					<!-- 삭제 기능 추가 -->
+				</MenuItem>
+			</Menu>
+		</Grid>
+
+	</Grid>
 </Window>
