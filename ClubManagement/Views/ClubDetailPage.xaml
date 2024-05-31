@@ -1,0 +1,56 @@
+﻿<Page x:Class="ClubManagement.Views.ClubDetailPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:ClubManagement"
+      mc:Ignorable="d"
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="ClubDetailPage">
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- 상단바 -->
+        <Grid Background="LightGray">
+            <Image Source="pack://application:,,,/Resources/kumohImg.jpg" HorizontalAlignment="Left"/>
+            <Button Content="동아리 신설" 
+                    HorizontalAlignment="Center"
+                    BorderThickness="0"
+                    Click="ToggleClubMenu"/>
+            <Button Content="로그아웃" HorizontalAlignment="Right"
+                    BorderThickness="0"
+                    Click="Go_Back"/>
+            <ComboBox x:Name="ClubMenu" 
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Bottom"
+                      Visibility="Collapsed"
+                      Width="200"
+                      SelectionChanged="ClubMenu_SelectionChanged">
+                <ComboBoxItem Content="동아리 신설 신청"/>
+                <ComboBoxItem Content="신설 신청 현황"/>
+            </ComboBox>
+        </Grid>
+
+        <!-- 네비게이션 바 -->
+        <Grid Grid.Row="1" Background="Beige">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Button Content="전체 동아리" Click="ShowAllClubs"/>
+            <Button Content="내 동아리" Grid.Column="1" Click="ShowMyClubs"/>
+        </Grid>
+
+        <!-- 동아리 목록 -->
+        <ScrollViewer Grid.Row="2" Margin="20">
+            <StackPanel x:Name="ClubStackPanel">
+                <!-- 동아리 항목을 계속 추가 -->
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>
