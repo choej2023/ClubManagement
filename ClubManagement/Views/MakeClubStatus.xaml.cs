@@ -17,7 +17,7 @@ namespace ClubManagement.Views
 {
     public partial class MakeClubStatus : Page
     {
-        public MakeClubStatus()
+        public MakeClubStatus(List<Models.Club> myClubs)
         {
             InitializeComponent();
             LoadStatus();
@@ -44,7 +44,8 @@ namespace ClubManagement.Views
 
             foreach (var status in statusList)
             {
-                var statusPanel = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(5) };
+                var statusPanel = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(5)};
+
 
                 var clubNameTextBlock = new TextBlock
                 {
@@ -73,7 +74,15 @@ namespace ClubManagement.Views
                 statusPanel.Children.Add(reviewDateTextBlock);
                 statusPanel.Children.Add(statusTextBlock);
 
-                StatusStackPanel.Children.Add(statusPanel);
+                var border = new Border
+                {
+                    BorderBrush = Brushes.Black,
+                    BorderThickness = new Thickness(1),
+                    Child = statusPanel,
+                    Margin = new Thickness(1)
+                };
+
+                StatusStackPanel.Children.Add(border);
             }
         }
     }

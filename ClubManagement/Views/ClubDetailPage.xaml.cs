@@ -1,7 +1,12 @@
 ﻿using ClubManagement.Models;
 using System.Collections.Generic;
+using System.IO;
+using System.Net.Http;
+using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace ClubManagement.Views
@@ -10,50 +15,112 @@ namespace ClubManagement.Views
     {
         private List<Club> allClubs;
         private List<Club> myClubs;
+        private int sid;
+        private readonly HttpClient _httpClient;
 
-        public ClubDetailPage()
+        public ClubDetailPage(int sId)
         {
             InitializeComponent();
-            LoadClubs();
+            allClubs = new List<Club>();
+            myClubs = new List<Club>();
+            sid = sId;
+            _httpClient = new HttpClient();
+            LoadClubs(sid);
         }
 
-        private void LoadClubs()
+        private async void LoadClubs(int sId)
         {
-            // 모든 동아리 정보를 리스트로 저장
-            allClubs = new List<Club>
+            try
             {
-                new Club { Name = "동아리명 1", Description = "한 줄 소개", Status = "가입 가능", ImagePath = "pack://application:,,,/Resources/kumohImg.jpg" },
-                new Club { Name = "동아리명 2", Description = "한 줄 소개", Status = "가입 불가", ImagePath = "pack://application:,,,/Resources/kumohImg.jpg" }
-            };
-            // 사용자의 동아리 정보를 리스트로 저장
-            myClubs = new List<Club>
+                HttpResponseMessage response = await _httpClient.GetAsync($"{Properties.Settings.Default.serverUrl}/api/clubs");
+                response.EnsureSuccessStatusCode();
+
+                string responseBody = await response.Content.ReadAsStringAsync();
+                var clubs = JsonSerializer.Deserialize<List<Club>>(responseBody);
+
+                foreach (var club in clubs)
+                {
+                    allClubs.Add(club);
+
+                    if (club.StudentID == sId)
+                        myClubs.Add(club);
+                }
+            }
+            catch (HttpRequestException ex)
             {
-                new Club { Name = "내 동아리명 1", Description = "한 줄 소개", Status = "가입 가능", ImagePath = "pack://application:,,,/Resources/kumohImg.jpg" }
-            };
-            // 초기에는 모든 동아리를 표시
+                MessageBox.Show($"Request error: {ex.Message}");
+            }
+
             DisplayClubs(allClubs);
         }
 
-        private void DisplayClubs(List<Club> clubs)
+        private async Task<BitmapImage> LoadImageFromServerAsync(string imageUrl)
+        {
+            string uri = $"{Properties.Settings.Default.serverUrl}/api/files/images/{imageUrl}";
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    HttpResponseMessage response = await client.GetAsync(uri);
+                    response.EnsureSuccessStatusCode();
+
+                    var imageData = await response.Content.ReadAsByteArrayAsync();
+
+                    BitmapImage bitmapImage = new BitmapImage();
+                    using (var stream = new MemoryStream(imageData))
+                    {
+                        stream.Seek(0, SeekOrigin.Begin);
+                        bitmapImage.BeginInit();
+                        bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmapImage.StreamSource = stream;
+                        bitmapImage.EndInit();
+                    }
+
+                    return bitmapImage;
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        private async void DisplayClubs(List<Club> clubs)
         {
             ClubStackPanel.Children.Clear();
             foreach (var club in clubs)
             {
-                // 각 동아리에 대해 스택패널 생성
-                var clubPanel = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(5) };
+                var clubGrid = new Grid { Margin = new Thickness(5) };
+                clubGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+                clubGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                clubGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+                // 행 정의 추가
+                clubGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                clubGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
                 var image = new Image
                 {
-                    Source = new BitmapImage(new Uri(club.ImagePath)),
                     Width = 50,
                     Height = 50,
                     Margin = new Thickness(5)
                 };
 
+                if (club.ImagePath != null)
+                {
+                    var bitmapImage = await LoadImageFromServerAsync(club.ImagePath);
+                    if (bitmapImage != null)
+                    {
+                        image.Source = bitmapImage;
+                    }
+                }
+
                 var nameTextBlock = new TextBlock
                 {
-                    Text = club.Name,
+                    Text = club.ClubName,
                     VerticalAlignment = VerticalAlignment.Center,
+                    FontSize = 14,
+                    FontWeight = FontWeights.Bold,
                     Margin = new Thickness(5)
                 };
 
@@ -61,24 +128,43 @@ namespace ClubManagement.Views
                 {
                     Text = club.Description,
                     VerticalAlignment = VerticalAlignment.Center,
+                    FontSize = 12,
                     Margin = new Thickness(5)
                 };
 
                 var statusTextBlock = new TextBlock
                 {
-                    Text = club.Status,
+                    Text = "인원 현황: " + club.count.ToString() + "/" + club.maxCount.ToString(),
                     VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Right,
                     Margin = new Thickness(5)
                 };
 
-                // 스택패널에 요소 추가
-                clubPanel.Children.Add(image);
-                clubPanel.Children.Add(nameTextBlock);
-                clubPanel.Children.Add(descriptionTextBlock);
-                clubPanel.Children.Add(statusTextBlock);
+                // Grid에 요소 추가
+                Grid.SetColumn(image, 0);
+                Grid.SetRowSpan(image, 2); // 이미지가 두 행을 차지하도록 설정
+                Grid.SetColumn(nameTextBlock, 1);
+                Grid.SetRow(nameTextBlock, 0);
+                Grid.SetColumn(descriptionTextBlock, 1);
+                Grid.SetRow(descriptionTextBlock, 1);
+                Grid.SetColumn(statusTextBlock, 2);
+                Grid.SetRowSpan(statusTextBlock, 2); // 상태 텍스트가 두 행을 차지하도록 설정
+
+                clubGrid.Children.Add(image);
+                clubGrid.Children.Add(nameTextBlock);
+                clubGrid.Children.Add(descriptionTextBlock);
+                clubGrid.Children.Add(statusTextBlock);
+
+                var border = new Border()
+                {
+                    BorderThickness = new Thickness(1),
+                    BorderBrush = Brushes.Black,
+                    Child = clubGrid,
+                    Margin = new Thickness(1)
+                };
 
                 // 메인 스택패널에 동아리 패널 추가
-                ClubStackPanel.Children.Add(clubPanel);
+                ClubStackPanel.Children.Add(border);
             }
         }
 
@@ -114,14 +200,21 @@ namespace ClubManagement.Views
                 switch (selectedItem.Content.ToString())
                 {
                     case "동아리 신설 신청":
-                        mainWindow.MainFrame.Navigate(new MakeClubMenu()); // 동아리 신설 신청 페이지로 이동
+                        mainWindow.MainFrame.Navigate(new MakeClubMenu(sid)); // 동아리 신설 신청 페이지로 이동
                         break;
                     case "신설 신청 현황":
-                        mainWindow.MainFrame.Navigate(new MakeClubStatus()); // 신설 신청 현황 페이지로 이동
+                        mainWindow.MainFrame.Navigate(new MakeClubStatus(myClubs)); // 신설 신청 현황 페이지로 이동
                         break;
                 }
                 ClubMenu.Visibility = Visibility.Collapsed; // 드롭다운 메뉴를 숨김
             }
+        }
+
+        private void ReLoad(object sender, RoutedEventArgs e)
+        {
+            myClubs.Clear();
+            allClubs.Clear();
+            LoadClubs(sid);
         }
     }
 }

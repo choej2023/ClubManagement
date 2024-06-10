@@ -12,11 +12,15 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- 상단바 -->
         <Grid Background="LightGray" Grid.Row="0">
             <Image Source="pack://application:,,,/Resources/kumohImg.jpg" HorizontalAlignment="Left"/>
+            <Label HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   FontSize="20">동아리 신설</Label>
             <Button Content="뒤로 가기" HorizontalAlignment="Right"
                     BorderThickness="0"
                     Click="Go_Back"/>
@@ -29,31 +33,35 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Text="입력 :" VerticalAlignment="Center" Margin="5"/>
-            <TextBox Grid.Column="1" Margin="5"/>
+            <TextBlock Text="동아리 이름 :" VerticalAlignment="Center" Margin="5"/>
+            <TextBox Grid.Column="1" Margin="5" x:Name="ClubNameTextBox"/>
 
-            <TextBlock Text="학과 :" Grid.Row="1" VerticalAlignment="Center" Margin="5"/>
-            <TextBox Grid.Row="1" Grid.Column="1" Margin="5"/>
+            <TextBlock Text="짧은 설명 :" Grid.Row="1" VerticalAlignment="Center" Margin="5"/>
+            <TextBox Grid.Row="1" Grid.Column="1" Margin="5" x:Name="ShortDescriptionTextBox"/>
+            <TextBlock Text="설명 :" Grid.Row="2" VerticalAlignment="Center" Margin="5"/>
+            <TextBox Grid.Row="2" Grid.Column="1" Margin="5" Height="100" TextWrapping="Wrap" AcceptsReturn="True" x:Name="DescriptionTextBox"/>
 
-            <TextBlock Text="학년 :" Grid.Row="2" VerticalAlignment="Center" Margin="5"/>
-            <TextBox Grid.Row="2" Grid.Column="1" Margin="5"/>
+            <TextBlock Text="최대 인원 수 :" Grid.Row="3" VerticalAlignment="Center" Margin="5"/>
+            <TextBox Grid.Row="3" Grid.Column="1" Margin="5" x:Name="MaxCountTextBox"/>
 
-            <TextBlock Text="학번 :" Grid.Row="3" VerticalAlignment="Center" Margin="5"/>
-            <TextBox Grid.Row="3" Grid.Column="1" Margin="5"/>
-
-            <TextBlock Text="이름 :" Grid.Row="4" VerticalAlignment="Center" Margin="5"/>
-            <TextBox Grid.Row="4" Grid.Column="1" Margin="5"/>
-
-            <TextBlock Text="인원 수 :" Grid.Row="5" VerticalAlignment="Center" Margin="5"/>
-            <TextBox Grid.Row="5" Grid.Column="1" Margin="5"/>
+            <TextBlock Text="이미지 :" Grid.Row="4" VerticalAlignment="Center" Margin="5"/>
+            <Border Grid.Row="4" Grid.Column="1" Margin="5" BorderBrush="Gray" BorderThickness="1" Background="LightGray"
+                    AllowDrop="True" DragEnter="ImageBorder_DragEnter" DragOver="ImageBorder_DragOver" Drop="ImageBorder_Drop">
+                <Grid>
+                    <TextBlock Text="여기로 이미지를 드래그 앤 드롭 하세요" HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="ImageTextBlock"/>
+                    <Image x:Name="ClubImage" Visibility="Collapsed" Stretch="Uniform"/>
+                </Grid>
+            </Border>
         </Grid>
+
+        <!-- 다음 페이지 버튼 -->
+        <Button Content="다음 페이지" Grid.Row="2" HorizontalAlignment="Center" Margin="10" Click="NextPage_Click"/>
     </Grid>
 </Page>

@@ -7,7 +7,7 @@
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ClubDetailPage">
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
@@ -16,25 +16,56 @@
         </Grid.RowDefinitions>
 
         <!-- 상단바 -->
-        <Grid Background="LightGray">
-            <Image Source="pack://application:,,,/Resources/kumohImg.jpg" HorizontalAlignment="Left"/>
-            <Button Content="동아리 신설" 
-                    HorizontalAlignment="Center"
-                    BorderThickness="0"
-                    Click="ToggleClubMenu"/>
-            <Button Content="로그아웃" HorizontalAlignment="Right"
-                    BorderThickness="0"
-                    Click="Go_Back"/>
-            <ComboBox x:Name="ClubMenu" 
-                      HorizontalAlignment="Center"
-                      VerticalAlignment="Bottom"
-                      Visibility="Collapsed"
-                      Width="200"
-                      SelectionChanged="ClubMenu_SelectionChanged">
-                <ComboBoxItem Content="동아리 신설 신청"/>
-                <ComboBoxItem Content="신설 신청 현황"/>
-            </ComboBox>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <Image Source="pack://application:,,,/Resources/kumohImg.jpg" 
+           HorizontalAlignment="Left" 
+           VerticalAlignment="Center"
+           Grid.Column="0"
+           Width="50" 
+           Height="50" 
+           Margin="10"/>
+
+            <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Button Content="동아리 신설" 
+                BorderThickness="0"
+                Padding="10"
+                Click="ToggleClubMenu"/>
+                <ComboBox x:Name="ClubMenu" 
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Top"
+                  Visibility="Collapsed"
+                  Width="200"
+                  SelectionChanged="ClubMenu_SelectionChanged"
+                  Margin="5">
+                    <ComboBoxItem Content="동아리 신설 신청"/>
+                    <ComboBoxItem Content="신설 신청 현황"/>
+                </ComboBox>
+            </StackPanel>
+
+            <Button Content="새로고침"
+            Grid.Column="2"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Click="ReLoad"
+            BorderThickness="0"
+            Padding="10"/>
+
+            <Button Content="로그아웃" 
+            Grid.Column="3"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            BorderThickness="0"
+            Click="Go_Back"
+            Padding="10"/>
         </Grid>
+
 
         <!-- 네비게이션 바 -->
         <Grid Grid.Row="1" Background="Beige">
