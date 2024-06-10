@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using ClubManagement.Models; // 추가된 네임스페이스
+using ClubManagement.Models;
 
 namespace ClubManagement.Views
 {
@@ -14,10 +14,13 @@ namespace ClubManagement.Views
     {
         private string _uploadedImagePath; // 업로드된 이미지 경로를 저장할 필드
         private int sid;
+        private readonly HttpClient _httpClient;
+
         public MakeClubMenu(int sId)
         {
             InitializeComponent();
             sid = sId;
+            _httpClient = new HttpClient();
         }
 
         private void Go_Back(object sender, RoutedEventArgs e)
@@ -38,7 +41,7 @@ namespace ClubManagement.Views
             // 현재 페이지에서 입력된 데이터를 다음 페이지로 전달
             var club = new Club
             {
-                StudentID = this.sid,
+                StudentID = sid,
                 ClubName = ClubNameTextBox.Text,
                 ShortDescription = ShortDescriptionTextBox.Text,
                 Description = DescriptionTextBox.Text,
@@ -96,6 +99,7 @@ namespace ClubManagement.Views
             }
         }
 
+        // 이미지 업로드
         private async Task<string> UploadImageAsync(string filePath)
         {
             using (var client = new HttpClient())
@@ -105,7 +109,7 @@ namespace ClubManagement.Views
                 fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("multipart/form-data");
                 content.Add(fileContent, "file", Path.GetFileName(filePath));
 
-                var response = await client.PostAsync($"{Properties.Settings.Default.serverUrl}/{Properties.Settings.Default.upload}", content);
+                var response = await client.PostAsync($"{Properties.Settings.Default.serverUrl}/api/Files/upload", content);
                 if (response.IsSuccessStatusCode)
                 {
                     var result = await response.Content.ReadAsStringAsync();

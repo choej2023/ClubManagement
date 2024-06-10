@@ -41,7 +41,6 @@ namespace ClubManagement.Views
                 foreach (var club in clubs)
                 {
                     allClubs.Add(club);
-
                     if (club.StudentID == sId)
                         myClubs.Add(club);
                 }

@@ -39,7 +39,7 @@ namespace ClubManagement.Views
                     {
                         MessageBox.Show("로그인 성공!");
                         MainWindow mainWin = (MainWindow)Application.Current.MainWindow;
-                        mainWin.MainFrame.Navigate(new ClubDetailPage(loginResponse.StudentId));
+                        mainWin.MainFrame.Navigate(new ClubDetailPage(loginResponse.StudentID));
                     }
                     else
                     {
@@ -67,7 +67,7 @@ namespace ClubManagement.Views
     public class LoginResponse
     {
         public bool Success { get; set; }
-        public int StudentId { get; set; }
+        public int StudentID { get; set; }
         public string Message { get; set; }
     }
 }
