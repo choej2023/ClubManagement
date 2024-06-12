@@ -1,0 +1,15 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClubManagement.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="serverUrl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://localhost:5189</Value>
+    </Setting>
+    <Setting Name="serverImages" Type="System.String" Scope="User">
+      <Value Profile="(Default)">api/Files/images</Value>
+    </Setting>
+    <Setting Name="upload" Type="System.String" Scope="User">
+      <Value Profile="(Default)">api/Files/upload</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
