@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using MySqlConnector;
+using System.Configuration;
+using System.Data;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -19,6 +22,8 @@ namespace ClubManagement
         public MainWindow()
         {
             InitializeComponent();
+            
         }
+       
     }
 }

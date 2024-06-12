@@ -8,39 +8,40 @@
         
         mc:Ignorable="d"
         Title="ClubDetailPage" Height="450" Width="800">
-    
+
 
     <Grid>
+
         <Grid.ColumnDefinitions>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            
+
         </Grid.RowDefinitions>
 
         <Border Grid.Row="0" BorderThickness="0,0,0,1" BorderBrush="Gray">
             <Grid>
-                
-                    <Image Source="/Resources/kumohImg.jpg" HorizontalAlignment="Left" Width="50"/>
-                
-                
+
+                <Image Source="/Resources/kumohImg.jpg" HorizontalAlignment="Left" Width="50"/>
+
+
                 <Menu Grid.Row="0" VerticalAlignment="Top" FontSize="16" Height="60" Margin="70,0,61,0" Background="Transparent">
                     <Menu.ItemsPanel>
                         <ItemsPanelTemplate>
                             <UniformGrid Columns="4"/>
                         </ItemsPanelTemplate>
                     </Menu.ItemsPanel>
-                    <MenuItem Header="게시글" FontSize="16" HorizontalAlignment="Center">
+                    <MenuItem Header="게시글" FontSize="16" HorizontalAlignment="Center" Click="ShowPosts_Click">
                         <!-- 게시글 관련 기능 추가 -->
                     </MenuItem>
-                    <MenuItem Header="부원 관리" FontSize="16" HorizontalAlignment="Center">
+                    <MenuItem Header="부원 관리" FontSize="16" HorizontalAlignment="Center" Click="ShowMember_Click">
                         <!-- 부원 관리 관련 기능 추가 -->
                     </MenuItem>
-                    <MenuItem Header="수정" FontSize="16" HorizontalAlignment="Center">
+                    <MenuItem Header="수정" FontSize="16" HorizontalAlignment="Center" Click="EditButton_Click">
                         <!-- 수정 기능 추가 -->
                     </MenuItem>
-                    <MenuItem Header="삭제" FontSize="16" HorizontalAlignment="Center">
+                    <MenuItem Header="삭제" FontSize="16" HorizontalAlignment="Center" Click="DeleteButton_Click">
                         <!-- 삭제 기능 추가 -->
                     </MenuItem>
                 </Menu>
@@ -51,7 +52,7 @@
                         </Style>
                     </Button.Resources>
                 </Button>
-                
+
             </Grid>
         </Border>
         <Grid Grid.Row="1">
@@ -65,58 +66,132 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="3*"/>
                 </Grid.RowDefinitions>
-                
-                
+
+
                 <Border Grid.Row="0" BorderBrush="Gray" BorderThickness="1,0,1,1">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Image Source="/Resources/soccerball.jpg" HorizontalAlignment="Center" Width="50"/>
-                        <TextBlock  FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center">동아리명</TextBlock>
+                        <TextBlock  FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding ClubName}"></TextBlock>
                     </StackPanel>
-                    
+
                 </Border>
-               
 
 
-               
+
+
                 <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="1,0,1,1">
-                    <TextBlock FontSize="25" HorizontalAlignment="Center" VerticalAlignment="Center">한줄소개</TextBlock>
+                    <TextBlock FontSize="25" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding ClubDescription}"></TextBlock>
                 </Border>
 
-                
+
                 <Border Grid.Row="2" BorderBrush="Gray" BorderThickness="1,0,1,1">
-                    <TextBlock FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Top">설명글</TextBlock>
+                    <TextBlock FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Top" Text="{Binding ClubDetails}"></TextBlock>
                 </Border>
-                
+
             </Grid>
 
 
             <Grid Grid.Column="1">
+
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button Content="Previous" Click="PreviousMonth_Click"/>
-                    <TextBlock Text="{Binding DisplayedMonth}" Margin="10"/>
-                    <Button Content="Next" Click="NextMonth_Click"/>
-                </StackPanel>
-                <ItemsControl Grid.Row="1" ItemsSource="{Binding Dates}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <UniformGrid Rows="6" Columns="7"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border BorderBrush="Black" BorderThickness="1">
-                                <StackPanel>
-                                    <TextBlock Text="{Binding Day}"/>
-                                    <!-- Add other data to display for the date -->
-                                </StackPanel>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <!-- Weekday labels -->
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Sun" HorizontalAlignment="Center" FontSize="20px" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="Mon" HorizontalAlignment="Center" FontSize="20px" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="Tue" HorizontalAlignment="Center" FontSize="20px" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="3" Text="Wed" HorizontalAlignment="Center" FontSize="20px" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="4" Text="Thu" HorizontalAlignment="Center" FontSize="20px" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="5" Text="Fri" HorizontalAlignment="Center" FontSize="20px" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="6" Text="Sat" HorizontalAlignment="Center" FontSize="20px" VerticalAlignment="Center"/>
+                <!-- Days of the month -->
+                <!-- First row -->
+                <Rectangle Grid.Row="1" Grid.Column="0" Fill="LightGray" Stroke="Black" StrokeThickness="1" MouseDown="Rectangle_Click"/>
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="1" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <TextBlock x:Name="TextBlock_1_0" Grid.Row="1" Grid.Column="0" Text="" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <Rectangle Grid.Row="1" Grid.Column="1" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="2" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <Rectangle Grid.Row="1" Grid.Column="2" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
+                <TextBlock Grid.Row="1" Grid.Column="2" Text="3" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <Rectangle Grid.Row="1" Grid.Column="3" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
+                <TextBlock Grid.Row="1" Grid.Column="3" Text="4" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <Rectangle Grid.Row="1" Grid.Column="4" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
+                <TextBlock Grid.Row="1" Grid.Column="4" Text="5" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <Rectangle Grid.Row="1" Grid.Column="5" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
+                <TextBlock Grid.Row="1" Grid.Column="5" Text="6" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <Rectangle Grid.Row="1" Grid.Column="6" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
+                <TextBlock Grid.Row="1" Grid.Column="6" Text="7" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <!-- Second row -->
+                <!-- Repeat for each day of the week -->
+                <Rectangle Grid.Row="2" Grid.Column="0" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="8" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <Rectangle Grid.Row="2" Grid.Column="1" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
+                <TextBlock Grid.Row="2" Grid.Column="1" Text="9" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <Rectangle Grid.Row="2" Grid.Column="2" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
+                <TextBlock Grid.Row="2" Grid.Column="2" Text="10" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <Rectangle Grid.Row="2" Grid.Column="3" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
+                <TextBlock Grid.Row="2" Grid.Column="3" Text="11" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <Rectangle Grid.Row="2" Grid.Column="4" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
+                <TextBlock Grid.Row="2" Grid.Column="4" Text="12" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <Rectangle Grid.Row="2" Grid.Column="5" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
+                <TextBlock Grid.Row="2" Grid.Column="5" Text="13" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <Rectangle Grid.Row="2" Grid.Column="6" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
+                <TextBlock Grid.Row="2" Grid.Column="6" Text="14" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <!-- Third row -->
+                <!-- Repeat for each day of the week -->
+                <Rectangle Grid.Row="3" Grid.Column="0" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="15" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <Rectangle Grid.Row="3" Grid.Column="1" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
+                <TextBlock Grid.Row="3" Grid.Column="1" Text="16" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <Rectangle Grid.Row="3" Grid.Column="2" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
+                <TextBlock Grid.Row="3" Grid.Column="2" Text="17" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <Rectangle Grid.Row="3" Grid.Column="3" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
+                <TextBlock Grid.Row="3" Grid.Column="3" Text="18" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <Rectangle Grid.Row="3" Grid.Column="4" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
+                <TextBlock Grid.Row="3" Grid.Column="4" Text="19" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <Rectangle Grid.Row="3" Grid.Column="5" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
+                <TextBlock Grid.Row="3" Grid.Column="5" Text="20" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <Rectangle Grid.Row="3" Grid.Column="6" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
+                <TextBlock Grid.Row="3" Grid.Column="6" Text="21" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <!-- Fourth row -->
+                <!-- Repeat for each day of the week -->
+                <Rectangle Grid.Row="4" Grid.Column="0" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="22" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <Rectangle Grid.Row="4" Grid.Column="1" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
+                <TextBlock Grid.Row="4" Grid.Column="1" Text="23" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <Rectangle Grid.Row="4" Grid.Column="2" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
+                <TextBlock Grid.Row="4" Grid.Column="2" Text="24" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <Rectangle Grid.Row="4" Grid.Column="3" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
+                <TextBlock Grid.Row="4" Grid.Column="3" Text="25" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <Rectangle Grid.Row="4" Grid.Column="4" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
+                <TextBlock Grid.Row="4" Grid.Column="4" Text="26" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <Rectangle Grid.Row="4" Grid.Column="5" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
+                <TextBlock Grid.Row="4" Grid.Column="5" Text="27" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <Rectangle Grid.Row="4" Grid.Column="6" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
+                <TextBlock Grid.Row="4" Grid.Column="6" Text="28" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <!-- Fifth row (optional) -->
+                <Rectangle Grid.Row="5" Grid.Column="0" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="29" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <Rectangle Grid.Row="5" Grid.Column="1" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
+                <TextBlock Grid.Row="5" Grid.Column="1" Text="30" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <Rectangle Grid.Row="5" Grid.Column="2" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
+                <TextBlock Grid.Row="5" Grid.Column="2" Text="31" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                
+                <!-- Repeat for each day of the week, if necessary -->
             </Grid>
 
         </Grid>
