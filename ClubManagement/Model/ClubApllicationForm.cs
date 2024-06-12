@@ -16,6 +16,7 @@ namespace ClubManagement.Model
         public string Name { get; set; }
         public int MemberCount { get; set; }
         public bool? IsAccepted { get; set; }
+        public DateTime? checkedDate { get; set; }
 
         // Navigation properties
         public Student Student { get; set; }
