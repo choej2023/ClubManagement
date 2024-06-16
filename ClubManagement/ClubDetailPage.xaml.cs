@@ -59,6 +59,7 @@ namespace ClubManagement
                             club = new Club
                             {
                                 ClubID = reader.GetInt32("ClubID"),
+                                StudentID = reader.GetInt32("StudentID"),
                                 ClubName = reader["ClubName"].ToString(),
                                 ShortDescription = reader["ShortDescription"].ToString(),
                                 Description = reader["Description"].ToString(),
