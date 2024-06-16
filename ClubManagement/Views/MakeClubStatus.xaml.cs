@@ -50,7 +50,7 @@ namespace ClubManagement.Views
                 var options = new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true,
-                    Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
+                    Converters = { new IntToBoolConverter() }
                 };
 
                 var clubApplicationForms = JsonSerializer.Deserialize<List<ClubApplicationForm>>(responseBody, options);
@@ -63,7 +63,7 @@ namespace ClubManagement.Views
 
                         var clubNameTextBlock = new TextBlock
                         {
-                            Text = clubApplicationForm.Name,
+                            Text = "동아리 명: " + clubApplicationForm.Name,
                             Width = 150,
                             VerticalAlignment = VerticalAlignment.Center,
                             Margin = new Thickness(5)
@@ -71,7 +71,7 @@ namespace ClubManagement.Views
 
                         var reviewDateTextBlock = new TextBlock
                         {
-                            Text = clubApplicationForm.checkedDate?.ToString("yyyy-MM-dd"),
+                            Text = "검토일자 : " + clubApplicationForm.checkedDate?.ToString("yyyy-MM-dd"),
                             Width = 150,
                             VerticalAlignment = VerticalAlignment.Center,
                             Margin = new Thickness(5)
@@ -79,8 +79,8 @@ namespace ClubManagement.Views
 
                         var statusTextBlock = new TextBlock
                         {
-                            Text = clubApplicationForm.isAccepted == true ? "승인됨" :
-                                   (clubApplicationForm.isAccepted == false ? "거절됨" : "검토 전"),
+                            Text = clubApplicationForm.isAccepted == true ? "승인됨" : 
+                            (clubApplicationForm.isAccepted == false ? "거절됨" : "검토 전"),
                             VerticalAlignment = VerticalAlignment.Center,
                             Margin = new Thickness(5)
                         };
@@ -118,5 +118,22 @@ namespace ClubManagement.Views
                 MessageBox.Show($"Unexpected error: {ex.Message}");
             }
         }
+
+    }
+}
+public class IntToBoolConverter : JsonConverter<bool>
+{
+    public override bool Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        if (reader.TokenType == JsonTokenType.Number && reader.TryGetInt32(out int intValue))
+        {
+            return intValue != 0;
+        }
+        return false;
+    }
+
+    public override void Write(Utf8JsonWriter writer, bool value, JsonSerializerOptions options)
+    {
+        writer.WriteNumberValue(value ? 1 : 0);
     }
 }
