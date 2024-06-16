@@ -88,7 +88,7 @@ namespace ClubManagement.Views
             {
                 UserCredential credential;
 
-                using (var stream = new FileStream("@@.json", FileMode.Open, FileAccess.Read))
+                using (var stream = new FileStream("client_secret_921999378493-3mjcj8s7l020j6pfdlmlja5qi3h375ji.apps.googleusercontent.com.json", FileMode.Open, FileAccess.Read))
                 {
                     string credPath = $"token_{club.ClubID}.json";
                     credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
