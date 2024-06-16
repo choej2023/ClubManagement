@@ -1,0 +1,67 @@
+﻿<Page x:Class="ClubManagement.Views.MakeClubMenu"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:ClubManagement.Views"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="MakeClubMenu">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 상단바 -->
+        <Grid Background="LightGray" Grid.Row="0">
+            <Image Source="pack://application:,,,/Resources/kumohImg.jpg" HorizontalAlignment="Left"/>
+            <Label HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   FontSize="20">동아리 신설</Label>
+            <Button Content="뒤로 가기" HorizontalAlignment="Right"
+                    BorderThickness="0"
+                    Click="Go_Back"/>
+        </Grid>
+
+        <!-- 입력 폼 -->
+        <Grid Grid.Row="1" Margin="20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="동아리 이름 :" VerticalAlignment="Center" Margin="5"/>
+            <TextBox Grid.Column="1" Margin="5" x:Name="ClubNameTextBox"/>
+
+            <TextBlock Text="짧은 설명 :" Grid.Row="1" VerticalAlignment="Center" Margin="5"/>
+            <TextBox Grid.Row="1" Grid.Column="1" Margin="5" x:Name="ShortDescriptionTextBox"/>
+            <TextBlock Text="설명 :" Grid.Row="2" VerticalAlignment="Center" Margin="5"/>
+            <TextBox Grid.Row="2" Grid.Column="1" Margin="5" Height="100" TextWrapping="Wrap" AcceptsReturn="True" x:Name="DescriptionTextBox"/>
+
+            <TextBlock Text="최대 인원 수 :" Grid.Row="3" VerticalAlignment="Center" Margin="5"/>
+            <TextBox Grid.Row="3" Grid.Column="1" Margin="5" x:Name="MaxCountTextBox"/>
+
+            <TextBlock Text="이미지 :" Grid.Row="4" VerticalAlignment="Center" Margin="5"/>
+            <Border Grid.Row="4" Grid.Column="1" Margin="5" BorderBrush="Gray" BorderThickness="1" Background="LightGray"
+                    AllowDrop="True" DragEnter="ImageBorder_DragEnter" DragOver="ImageBorder_DragOver" Drop="ImageBorder_Drop">
+                <Grid>
+                    <TextBlock Text="여기로 이미지를 드래그 앤 드롭 하세요" HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="ImageTextBlock"/>
+                    <Image x:Name="ClubImage" Visibility="Collapsed" Stretch="Uniform"/>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- 다음 페이지 버튼 -->
+        <Button Content="다음 페이지" Grid.Row="2" HorizontalAlignment="Center" Margin="10" Click="NextPage_Click"/>
+    </Grid>
+</Page>

@@ -1,0 +1,54 @@
+[33mcommit 4c7ac4d0e57a14805da8665ff704ef796493c49f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mhyeock[m[33m)[m
+Author: choej2303 <choej2303@gmail.com>
+Date:   Wed Jun 12 17:38:44 2024 +0900
+
+    통합 전
+
+[33mcommit f71f02147bcd4e241228a8a12bd0bfc805ff14e4[m
+Author: choej2303 <choej2303@gmail.com>
+Date:   Mon Jun 10 15:37:48 2024 +0900
+
+    동아리 신설 신청서 기능 추가
+
+[33mcommit 6af348909df3bc9626e52a7de68e3089037528a4[m
+Author: choej2303 <choej2303@gmail.com>
+Date:   Mon Jun 10 12:39:11 2024 +0900
+
+    로그인, 동아리 리스트 로드 구현,
+    동아리 만드는 페이지는 미완
+
+[33mcommit adaec7d0ef22d8ce1ac8ccd4f334e672d04a37a2[m
+Author: choej2303 <choej2303@gmail.com>
+Date:   Fri May 31 14:01:00 2024 +0900
+
+    로그인 ~ 동아리 신설 신청 페이지 UI. 페이지 간 이동 구현
+
+[33mcommit 5c0e698da0533ddd5b4242ef6de3bd96ade58f54[m
+Author: choej2303 <choej2303@gmail.com>
+Date:   Wed May 29 15:24:50 2024 +0900
+
+    test
+
+[33mcommit 117733bf3509821b6b4ff51d2152a1234a7c8006[m
+Author: zx462 <rladuwns1917@naver.com>
+Date:   Wed May 29 15:06:58 2024 +0900
+
+    상단바 수정
+
+[33mcommit 2b81194dae49edb2693597d06359f45b4f3ff134[m
+Author: choej2303 <choej2303@gmail.com>
+Date:   Tue May 28 17:57:41 2024 +0900
+
+    기본 템플릿 만듦
+
+[33mcommit cccafc497ca578df281fb4835ae1d6e30d18e713[m
+Author: choej2303 <choej2303@gmail.com>
+Date:   Tue May 28 16:04:59 2024 +0900
+
+    초기 커밋.
+
+[33mcommit 6e80538fd529f5c9e0e783d5e0791d1158915f44[m
+Author: choej2303 <choej2303@gmail.com>
+Date:   Tue May 28 16:04:57 2024 +0900
+
+    .gitattributes 및 .gitignore을(를) 추가합니다.

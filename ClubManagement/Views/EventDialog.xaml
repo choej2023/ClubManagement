@@ -1,0 +1,31 @@
+﻿<Window x:Class="ClubManagement.Views.EventDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ClubManagement.Views"
+        mc:Ignorable="d"
+        Title="EventDialog" Height="450" Width="800">
+    <Grid>
+        <StackPanel Margin="10">
+            <TextBlock Text="Event Summary:"/>
+            <TextBox Name="SummaryTextBox" Margin="0,0,0,10"/>
+            <TextBlock Text="Start Time:"/>
+            <DatePicker Name="StartDatePicker"/>
+            <TextBlock Text="Start Hour:"/>
+            <TextBox Name="StartHourTextBox" Margin="0,0,0,10"/>
+            <TextBlock Text="End Time:"/>
+            <DatePicker Name="EndDatePicker"/>
+            <TextBlock Text="End Hour:"/>
+            <TextBox Name="EndHourTextBox" Margin="0,0,0,10"/>
+            <TextBlock Text="Description:"/>
+            <TextBox Name="DescriptionTextBox" Margin="0,0,0,10"/>
+            <TextBlock Text="Location:"/>
+            <TextBox Name="LocationTextBox" Margin="0,0,0,10"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="OK" Click="OkButton_Click" Margin="0,0,10,0"/>
+                <Button Content="Cancel" Click="CancelButton_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>
