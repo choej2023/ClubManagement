@@ -10,7 +10,7 @@ namespace ClubManagement.Model
     {
         public int StudentID { get; set; }
         public string StudentNumber { get; set; }
-        public string Username { get; set; }
+        public string UserName { get; set; }
         public string Password { get; set; }
         public int Year { get; set; }
         public string Name { get; set; }

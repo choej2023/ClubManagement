@@ -75,8 +75,6 @@ namespace ClubManagement
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
-            ClubDetailPage clubDetailPage = new ClubDetailPage(club, sid);
-            clubDetailPage.Show();
             this.Close();
         }
        

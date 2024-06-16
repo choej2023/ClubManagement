@@ -56,6 +56,12 @@ namespace ClubManagement.Views
                 MessageBox.Show($"Request error: {ex.Message}");
             }
         }
+
+        private void RegistrationButton_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow mainWin = (MainWindow)Application.Current.MainWindow;
+            mainWin.MainFrame.Navigate(new RegistrationPage());
+        }
     }
 
     public class LoginRequest

@@ -226,6 +226,7 @@ namespace ClubManagement.Views
                         mainWindow.MainFrame.Navigate(new MakeClubStatus(sid)); // 신설 신청 현황 페이지로 이동
                         break;
                 }
+                ClubMenu.SelectedItem = null;
                 ClubMenu.Visibility = Visibility.Collapsed; // 드롭다운 메뉴를 숨김
             }
         }

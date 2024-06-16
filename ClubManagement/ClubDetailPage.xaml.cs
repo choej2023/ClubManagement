@@ -442,14 +442,12 @@ namespace ClubManagement
         {
             ClubBoardPage clubBoardPage = new ClubBoardPage(club, sid);
             clubBoardPage.Show();
-            this.Close();
         }
 
         private void ShowMember_Click(object sender, RoutedEventArgs e)
         {
             MemberManagement memberManagement = new MemberManagement(club, sid);
             memberManagement.Show();
-            this.Close();
         }
 
         private void Back_Button(object sender, RoutedEventArgs e)

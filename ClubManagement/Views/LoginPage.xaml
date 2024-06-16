@@ -44,7 +44,10 @@
             <Label Content="Password:" Grid.Row="1" VerticalAlignment="Center" Margin="5"/>
             <PasswordBox x:Name="txtPassword" Grid.Row="1" Grid.Column="1" Margin="5"/>
 
-            <Button x:Name="LoginButton" Content="Login" Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="5" Click="LoginButton_Click"/>
+            <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Content="Login" Margin="5" Click="LoginButton_Click"/>
+                <Button Content="Registration" Margin="5" Click="RegistrationButton_Click"/>
+            </StackPanel>
         </Grid>
     </Grid>
 </Page>

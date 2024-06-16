@@ -72,15 +72,18 @@ namespace ClubManagement
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
-            ClubDetailPage clubDetailPage = new ClubDetailPage(club, sid);
-            clubDetailPage.Show();
             this.Close();
         }
 
         private void WritePost_Click(object sender, RoutedEventArgs e)
         {
-            PostCreatePage postCreatePage = new PostCreatePage(club.ClubID);
-            postCreatePage.ShowDialog();
+            if (club.StudentID == sid)
+            {
+                PostCreatePage postCreatePage = new PostCreatePage(club.ClubID);
+                postCreatePage.ShowDialog();
+            }
+            else
+                MessageBox.Show("접근 권한이 없습니다.");
             // 데이터가 변경되었으므로, 목록을 갱신합니다.
             RefreshPosts();
         }

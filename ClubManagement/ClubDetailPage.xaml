@@ -54,7 +54,8 @@
 
                 <Border Grid.Row="0" BorderBrush="Gray" BorderThickness="1,0,1,1">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Image Source="{Binding ImageSource}" HorizontalAlignment="Center" Width="50"/>
+                        <Image Source="{Binding ImageSource}" HorizontalAlignment="Center" Width="50"
+                               Margin="0 0 10 0"/>
                         <TextBlock FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding ClubName}"/>
                     </StackPanel>
                 </Border>
