@@ -125,6 +125,7 @@
                 <TextBlock x:Name="TextBlock_1_0" Grid.Row="1" Grid.Column="0" Text="" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 <Rectangle Grid.Row="1" Grid.Column="1" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
                 <TextBlock Grid.Row="1" Grid.Column="1" Text="2" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <TextBlock x:Name="TextBlock_1_1" Grid.Row="1" Grid.Column="1" Text="" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 <Rectangle Grid.Row="1" Grid.Column="2" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
                 <TextBlock Grid.Row="1" Grid.Column="2" Text="3" FontSize="20px" TextTrimming="WordEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                 <Rectangle Grid.Row="1" Grid.Column="3" Fill="LightGray" Stroke="Black" StrokeThickness="1"/>
