@@ -36,9 +36,17 @@
                         <GridViewColumn Header="Name" DisplayMemberBinding="{Binding MemberName}" Width="150"/>
                         <GridViewColumn Header="Role" DisplayMemberBinding="{Binding MemberRole}" Width="100"/>
                         <GridViewColumn Header="Department" DisplayMemberBinding="{Binding MemberDepartment}" Width="100"/>
+                        <GridViewColumn Header="Actions" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="삭제" Click="DeleteMember_Click" Tag="{Binding MemberID}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
                     </GridView>
                 </ListView.View>
             </ListView>
+
         </Grid>
     </Grid>
 </Window>

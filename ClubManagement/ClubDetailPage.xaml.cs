@@ -1,4 +1,5 @@
-﻿using ClubManagement.Models;
+﻿using ClubManagement.Model;
+using ClubManagement.Models;
 using ClubManagement.Views;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Calendar.v3;
@@ -7,15 +8,14 @@ using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using MySqlConnector;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace ClubManagement
 {
@@ -38,7 +38,6 @@ namespace ClubManagement
             InitializeGoogleCalendarService();
         }
 
-        // 데이터베이스로부터 데이터를 읽어와 Club 객체를 생성하고 설정하는 메서드
         private async Task LoadDataFromDatabaseAsync()
         {
             try
@@ -115,11 +114,15 @@ namespace ClubManagement
             {
                 UserCredential credential;
                 string credPath = $"token_{club.ClubID}";
-                string tokenFilePath = System.IO.Path.Combine($"token_{club.ClubID}", $"Google.Apis.Auth.OAuth2.Responses.TokenResponse-{club.StudentID}");
+                string tokenFilePath = Path.Combine(credPath, $"Google.Apis.Auth.OAuth2.Responses.TokenResponse-{club.StudentID}");
 
                 // 인증 토큰 파일이 존재하는지 확인
                 if (!File.Exists(tokenFilePath))
+                {
                     MessageBox.Show("아직 구글 캘린더와 연동되지 않았습니다.");
+                    if (club.StudentID != sid)
+                        return;
+                }
 
                 using (var stream = new FileStream("client_secret_921999378493-3mjcj8s7l020j6pfdlmlja5qi3h375ji.apps.googleusercontent.com.json", FileMode.Open, FileAccess.Read))
                 {
@@ -136,6 +139,9 @@ namespace ClubManagement
                     HttpClientInitializer = credential,
                     ApplicationName = ApplicationName,
                 });
+
+                // 연동 후 로컬 데이터베이스의 이벤트들을 구글 캘린더로 업로드
+                await UploadLocalEventsToGoogleCalendar();
             }
             catch (Exception ex)
             {
@@ -143,13 +149,49 @@ namespace ClubManagement
             }
         }
 
+        private async Task UploadLocalEventsToGoogleCalendar()
+        {
+            try
+            {
+                string connectionString = "Server=localhost;Database=clubmanagement;Uid=root;Pwd=root;";
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "SELECT * FROM events WHERE ClubID = @ClubID";
+                    MySqlCommand command = new MySqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@ClubID", club.ClubID);
 
+                    using (MySqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Event newEvent = new Event()
+                            {
+                                Summary = reader["Summary"].ToString(),
+                                Description = reader["Description"].ToString(),
+                                Start = new EventDateTime() { DateTime = reader.GetDateTime("Start") },
+                                End = new EventDateTime() { DateTime = reader.GetDateTime("End") },
+                                Location = reader["Location"].ToString(),
+                            };
 
+                            await service.Events.Insert(newEvent, "primary").ExecuteAsync();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error uploading events to Google Calendar: " + ex.Message);
+            }
+        }
 
         private async void EventCalendar_SelectedDatesChanged(object sender, SelectionChangedEventArgs e)
         {
             if (service == null)
+            {
+                LoadLocalEvents();
                 return;
+            }
 
             var selectedDate = EventCalendar.SelectedDate;
             if (selectedDate == null)
@@ -159,8 +201,8 @@ namespace ClubManagement
             DateTime endDate = startDate.AddDays(1);
 
             EventsResource.ListRequest request = service.Events.List("primary");
-            request.TimeMinDateTimeOffset = new DateTimeOffset(startDate);
-            request.TimeMaxDateTimeOffset = new DateTimeOffset(endDate);
+            request.TimeMin = startDate;
+            request.TimeMax = endDate;
             request.ShowDeleted = false;
             request.SingleEvents = true;
             request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime;
@@ -181,14 +223,63 @@ namespace ClubManagement
             }
         }
 
+        private void LoadLocalEvents()
+        {
+            var selectedDate = EventCalendar.SelectedDate;
+            if (selectedDate == null)
+                return;
+
+            DateTime startDate = selectedDate.Value.Date;
+            DateTime endDate = startDate.AddDays(1);
+
+            try
+            {
+                string connectionString = "Server=localhost;Database=clubmanagement;Uid=root;Pwd=root;";
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "SELECT * FROM events WHERE ClubID = @ClubID AND Start >= @StartDate AND Start < @EndDate";
+                    MySqlCommand command = new MySqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@ClubID", club.ClubID);
+                    command.Parameters.AddWithValue("@StartDate", startDate);
+                    command.Parameters.AddWithValue("@EndDate", endDate);
+
+                    using (MySqlDataReader reader = command.ExecuteReader())
+                    {
+                        EventListBox.Items.Clear();
+                        while (reader.Read())
+                        {
+                            var localEvent = new LocalEvent
+                            {
+                                Id = reader.GetInt32("Id"),
+                                ClubID = reader.GetInt32("ClubID"),
+                                Summary = reader["Summary"].ToString(),
+                                Description = reader["Description"].ToString(),
+                                Start = reader.GetDateTime("Start"),
+                                End = reader.GetDateTime("End"),
+                                Location = reader["Location"].ToString(),
+                                GoogleEventId = reader["GoogleEventId"].ToString()
+                            };
+                            EventListBox.Items.Add(new EventWrapper(localEvent));
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading local events: " + ex.Message);
+            }
+        }
+
+
         private void AddEventButton_Click(object sender, RoutedEventArgs e)
         {
             if (club.StudentID != sid)
             {
                 MessageBox.Show("접근 권한이 없습니다.");
+                return;
             }
-            else 
-                AddOrEditEvent(null);
+            AddOrEditEvent(null);
         }
 
         private void EditEventButton_Click(object sender, RoutedEventArgs e)
@@ -196,90 +287,209 @@ namespace ClubManagement
             if (club.StudentID != sid)
             {
                 MessageBox.Show("접근 권한이 없습니다.");
+                return;
+            }
+            if (EventListBox.SelectedItem is LocalEventWrapper selectedEventWrapper)
+            {
+                AddOrEditEvent(selectedEventWrapper.Event);
             }
             else
             {
-                if (EventListBox.SelectedItem is EventWrapper selectedEventWrapper)
-                {
-                    AddOrEditEvent(selectedEventWrapper.Event);
-                }
-                else
-                {
-                    MessageBox.Show("Please select an event to edit.");
-                }
+                MessageBox.Show("Please select an event to edit.");
             }
         }
-
 
         private async void DeleteEventButton_Click(object sender, RoutedEventArgs e)
         {
             if (club.StudentID != sid)
             {
                 MessageBox.Show("접근 권한이 없습니다.");
+                return;
+            }
+            if (EventListBox.SelectedItem is LocalEventWrapper selectedEventWrapper)
+            {
+                if (service != null && selectedEventWrapper.Event.GoogleEventId != null)
+                {
+                    await service.Events.Delete("primary", selectedEventWrapper.Event.GoogleEventId).ExecuteAsync();
+                }
+                DeleteLocalEvent(selectedEventWrapper.Event);
+                MessageBox.Show("Event deleted.");
+                EventCalendar_SelectedDatesChanged(null, null); // Refresh the event list
             }
             else
             {
-                if (EventListBox.SelectedItem is EventWrapper selectedEventWrapper)
-                {
-                    await service.Events.Delete("primary", selectedEventWrapper.Event.Id).ExecuteAsync();
-                    MessageBox.Show("Event deleted.");
-                    EventCalendar_SelectedDatesChanged(null, null); // Refresh the event list
-                }
-                else
-                {
-                    MessageBox.Show("Please select an event to delete.");
-                }
+                MessageBox.Show("Please select an event to delete.");
             }
         }
-        private async void AddOrEditEvent(Event existingEvent)
+
+        private void DeleteLocalEvent(LocalEvent localEvent)
+        {
+            try
+            {
+                string connectionString = "Server=localhost;Database=clubmanagement;Uid=root;Pwd=root;";
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "DELETE FROM events WHERE Id = @Id";
+                    MySqlCommand command = new MySqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@Id", localEvent.Id);
+                    command.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error deleting local event: " + ex.Message);
+            }
+        }
+
+        private async void AddOrEditEvent(LocalEvent existingEvent)
         {
             EventDialog dialog = new EventDialog();
 
             if (existingEvent != null)
             {
                 dialog.SummaryTextBox.Text = existingEvent.Summary;
-                dialog.StartDatePicker.SelectedDate = existingEvent.Start.DateTimeDateTimeOffset?.DateTime ?? DateTime.Parse(existingEvent.Start.Date);
-                dialog.StartHourTextBox.Text = (existingEvent.Start.DateTimeDateTimeOffset?.DateTime ?? DateTime.Parse(existingEvent.Start.Date)).Hour.ToString();
-                dialog.EndDatePicker.SelectedDate = existingEvent.End.DateTimeDateTimeOffset?.DateTime ?? DateTime.Parse(existingEvent.End.Date);
-                dialog.EndHourTextBox.Text = (existingEvent.End.DateTimeDateTimeOffset?.DateTime ?? DateTime.Parse(existingEvent.End.Date)).Hour.ToString();
+                dialog.StartDatePicker.SelectedDate = existingEvent.Start;
+                dialog.StartHourTextBox.Text = existingEvent.Start.Hour.ToString();
+                dialog.EndDatePicker.SelectedDate = existingEvent.End;
+                dialog.EndHourTextBox.Text = existingEvent.End.Hour.ToString();
                 dialog.DescriptionTextBox.Text = existingEvent.Description;
                 dialog.LocationTextBox.Text = existingEvent.Location;
             }
 
             if (dialog.ShowDialog() == true)
             {
-                Event newEvent = existingEvent ?? new Event();
-                newEvent.Summary = dialog.EventSummary;
-                newEvent.Start = new EventDateTime() { DateTimeDateTimeOffset = new DateTimeOffset(dialog.StartTime) };
-                newEvent.End = new EventDateTime() { DateTimeDateTimeOffset = new DateTimeOffset(dialog.EndTime) };
-                newEvent.Description = dialog.EventDescription;
-                newEvent.Location = dialog.EventLocation;
+                LocalEvent newEvent = existingEvent ?? new LocalEvent();
+                newEvent.ClubID = club.ClubID;
+                newEvent.Summary = dialog.SummaryTextBox.Text;
+                DateTime startDate = dialog.StartDatePicker.SelectedDate ?? DateTime.Now;
+                DateTime endDate = dialog.EndDatePicker.SelectedDate ?? DateTime.Now;
+                newEvent.Start = new DateTime(startDate.Year, startDate.Month, startDate.Day, int.Parse(dialog.StartHourTextBox.Text), 0, 0);
+                newEvent.End = new DateTime(endDate.Year, endDate.Month, endDate.Day, int.Parse(dialog.EndHourTextBox.Text), 0, 0);
+                newEvent.Description = dialog.DescriptionTextBox.Text;
+                newEvent.Location = dialog.LocationTextBox.Text;
 
                 if (existingEvent == null)
                 {
-                    await service.Events.Insert(newEvent, "primary").ExecuteAsync();
+                    SaveLocalEvent(newEvent);
                     MessageBox.Show("Event added.");
                 }
                 else
                 {
-                    await service.Events.Update(newEvent, "primary", existingEvent.Id).ExecuteAsync();
+                    UpdateLocalEvent(newEvent);
                     MessageBox.Show("Event updated.");
+                }
+
+                if (service != null)
+                {
+                    Event googleEvent = new Event()
+                    {
+                        Summary = newEvent.Summary,
+                        Description = newEvent.Description,
+                        Start = new EventDateTime() { DateTime = newEvent.Start },
+                        End = new EventDateTime() { DateTime = newEvent.End },
+                        Location = newEvent.Location,
+                    };
+
+                    if (existingEvent == null || existingEvent.GoogleEventId == null)
+                    {
+                        var createdEvent = await service.Events.Insert(googleEvent, "primary").ExecuteAsync();
+                        newEvent.GoogleEventId = createdEvent.Id;
+                    }
+                    else
+                    {
+                        googleEvent.Id = existingEvent.GoogleEventId;
+                        await service.Events.Update(googleEvent, "primary", googleEvent.Id).ExecuteAsync();
+                    }
+
+                    UpdateLocalEvent(newEvent); // Update the local event with GoogleEventId
                 }
 
                 EventCalendar_SelectedDatesChanged(null, null); // Refresh the event list
             }
         }
 
+
+
+        private void SaveLocalEvent(LocalEvent localEvent)
+        {
+            try
+            {
+                string connectionString = "Server=localhost;Database=clubmanagement;Uid=root;Pwd=root;";
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "INSERT INTO events (ClubID, Summary, Description, Start, End, Location, GoogleEventId) VALUES (@ClubID, @Summary, @Description, @Start, @End, @Location, @GoogleEventId)";
+                    MySqlCommand command = new MySqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@ClubID", localEvent.ClubID);
+                    command.Parameters.AddWithValue("@Summary", localEvent.Summary);
+                    command.Parameters.AddWithValue("@Description", localEvent.Description);
+                    command.Parameters.AddWithValue("@Start", localEvent.Start);
+                    command.Parameters.AddWithValue("@End", localEvent.End);
+                    command.Parameters.AddWithValue("@Location", localEvent.Location);
+                    command.Parameters.AddWithValue("@GoogleEventId", localEvent.GoogleEventId);
+                    command.ExecuteNonQuery();
+
+                    // 삽입된 레코드의 자동 증가 Id 값을 가져와서 설정
+                    localEvent.Id = (int)command.LastInsertedId;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error saving local event: " + ex.Message);
+            }
+        }
+
+
+        private void UpdateLocalEvent(LocalEvent localEvent)
+        {
+            try
+            {
+                string connectionString = "Server=localhost;Database=clubmanagement;Uid=root;Pwd=root;";
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "UPDATE events SET Summary = @Summary, Description = @Description, Start = @Start, End = @End, Location = @Location, GoogleEventId = @GoogleEventId WHERE Id = @Id";
+                    MySqlCommand command = new MySqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@Summary", localEvent.Summary);
+                    command.Parameters.AddWithValue("@Description", localEvent.Description);
+                    command.Parameters.AddWithValue("@Start", localEvent.Start);
+                    command.Parameters.AddWithValue("@End", localEvent.End);
+                    command.Parameters.AddWithValue("@Location", localEvent.Location);
+                    command.Parameters.AddWithValue("@GoogleEventId", localEvent.GoogleEventId);
+                    command.Parameters.AddWithValue("@Id", localEvent.Id);
+                    command.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error updating local event: " + ex.Message);
+            }
+        }
+
+
         private void EventListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (EventListBox.SelectedItem is EventWrapper selectedEventWrapper)
             {
-                var eventItem = selectedEventWrapper.Event;
-                EventDetailsTextBlock.Text = $"제목: {eventItem.Summary}\n" +
-                                             $"시작일: {(eventItem.Start.DateTimeDateTimeOffset.HasValue ? eventItem.Start.DateTimeDateTimeOffset.Value.ToString("g") : eventItem.Start.Date)}\n" +
-                                             $"종료일: {(eventItem.End.DateTimeDateTimeOffset.HasValue ? eventItem.End.DateTimeDateTimeOffset.Value.ToString("g") : eventItem.End.Date)}\n" +
-                                             $"내용: {eventItem.Description ?? "N/A"}\n" +
-                                             $"위치: {eventItem.Location ?? "N/A"}";
+                if (selectedEventWrapper.IsLocal)
+                {
+                    var eventItem = selectedEventWrapper.LocalEvent;
+                    EventDetailsTextBlock.Text = $"제목: {eventItem.Summary}\n" +
+                                                 $"시작일: {eventItem.Start.ToString("g")}\n" +
+                                                 $"종료일: {eventItem.End.ToString("g")}\n" +
+                                                 $"내용: {eventItem.Description ?? "N/A"}\n" +
+                                                 $"위치: {eventItem.Location ?? "N/A"}";
+                }
+                else
+                {
+                    var eventItem = selectedEventWrapper.GoogleEvent;
+                    EventDetailsTextBlock.Text = $"제목: {eventItem.Summary}\n" +
+                                                 $"시작일: {(eventItem.Start.DateTime.HasValue ? eventItem.Start.DateTime.Value.ToString("g") : eventItem.Start.Date)}\n" +
+                                                 $"종료일: {(eventItem.End.DateTime.HasValue ? eventItem.End.DateTime.Value.ToString("g") : eventItem.End.Date)}\n" +
+                                                 $"내용: {eventItem.Description ?? "N/A"}\n" +
+                                                 $"위치: {eventItem.Location ?? "N/A"}";
+                }
             }
             else
             {
@@ -287,18 +497,19 @@ namespace ClubManagement
             }
         }
 
-        private class EventWrapper
+
+        private class LocalEventWrapper
         {
-            public EventWrapper(Event eventItem)
+            public LocalEventWrapper(LocalEvent eventItem)
             {
                 Event = eventItem;
             }
 
-            public Event Event { get; }
+            public LocalEvent Event { get; }
 
             public override string ToString()
             {
-                return $"{Event.Summary} ({Event.Start.DateTimeDateTimeOffset?.ToString("g") ?? Event.Start.Date})";
+                return $"{Event.Summary} ({Event.Start.ToString("g")})";
             }
         }
 
@@ -307,24 +518,21 @@ namespace ClubManagement
             if (club.StudentID != sid)
             {
                 MessageBox.Show("접근 권한이 없습니다.");
+                return;
             }
-            else
+            // 수정 페이지로 이동
+            ModifyPage modifyPage = new ModifyPage((Club)DataContext);
+            modifyPage.ShowDialog();
+
+            // 수정 페이지에서 수정된 Club 객체를 가져옴
+            if (modifyPage.ModifiedClub != null)
             {
-                // 수정 페이지로 이동
-                ModifyPage modifyPage = new ModifyPage((Club)DataContext);
-                modifyPage.ShowDialog();
+                // 수정된 Club 객체로 DataContext 갱신
+                DataContext = modifyPage.ModifiedClub;
 
-                // 수정 페이지에서 수정된 Club 객체를 가져옴
-                if (modifyPage.ModifiedClub != null)
-                {
-                    // 수정된 Club 객체로 DataContext 갱신
-                    DataContext = modifyPage.ModifiedClub;
-
-                    // 데이터베이스 업데이트
-                    UpdateDataInDatabase(modifyPage.ModifiedClub);
-                }
+                // 데이터베이스 업데이트
+                UpdateDataInDatabase(modifyPage.ModifiedClub);
             }
-
         }
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
@@ -332,23 +540,19 @@ namespace ClubManagement
             if (club.StudentID != sid)
             {
                 MessageBox.Show("접근 권한이 없습니다.");
+                return;
             }
-            else
+            // 삭제 확인 메시지 출력
+            MessageBoxResult result = MessageBox.Show("클럽을 삭제하시겠습니까?", "삭제 확인", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            // 사용자가 확인을 선택한 경우에만 삭제 수행
+            if (result == MessageBoxResult.Yes)
             {
-                // 삭제 확인 메시지 출력
-                MessageBoxResult result = MessageBox.Show("클럽을 삭제하시겠습니까?", "삭제 확인", MessageBoxButton.YesNo, MessageBoxImage.Question);
-
-                // 사용자가 확인을 선택한 경우에만 삭제 수행
-                if (result == MessageBoxResult.Yes)
-                {
-                    // 데이터베이스에서 클럽 삭제
-                    DeleteClubFromDatabase();
-                }
+                // 데이터베이스에서 클럽 삭제
+                DeleteClubFromDatabase();
             }
-
         }
 
-        // 데이터베이스에서 클럽 삭제 메서드
         private void DeleteClubFromDatabase()
         {
             try
@@ -359,7 +563,7 @@ namespace ClubManagement
                     connection.Open();
                     string query = "DELETE FROM club WHERE ClubID = @ClubID";
                     MySqlCommand command = new MySqlCommand(query, connection);
-                    command.Parameters.AddWithValue("@ClubID", club.ClubID); // 예시로 ID 1을 사용하였음, 실제로는 Club의 고유한 ID를 사용해야 함
+                    command.Parameters.AddWithValue("@ClubID", club.ClubID);
                     int rowsAffected = command.ExecuteNonQuery();
                     if (rowsAffected > 0)
                     {
@@ -392,7 +596,7 @@ namespace ClubManagement
                     command.Parameters.AddWithValue("@ClubName", modifiedClub.ClubName);
                     command.Parameters.AddWithValue("@ShortDescription", modifiedClub.ShortDescription);
                     command.Parameters.AddWithValue("@Description", modifiedClub.Description);
-                    command.Parameters.AddWithValue("@ClubID", club.ClubID); // 예시로 ID 1을 사용하였음, 실제로는 Club의 고유한 ID를 사용해야 함
+                    command.Parameters.AddWithValue("@ClubID", club.ClubID);
                     int rowsAffected = command.ExecuteNonQuery();
                     if (rowsAffected > 0)
                     {
@@ -407,34 +611,6 @@ namespace ClubManagement
             catch (Exception ex)
             {
                 MessageBox.Show("Error: " + ex.Message);
-            }
-        }
-
-        private void Rectangle_Click(object sender, RoutedEventArgs e)
-        {
-            // 클릭된 Rectangle 가져오기
-            Rectangle rectangle = sender as Rectangle;
-            if (rectangle != null)
-            {
-                // Grid 내의 위치를 가져오기
-                int row = Grid.GetRow(rectangle);
-                int column = Grid.GetColumn(rectangle);
-
-                // 대응하는 TextBlock 찾기
-                string textBlockName = $"TextBlock_{row}_{column}";
-                TextBlock textBlock = FindName(textBlockName) as TextBlock;
-
-                if (textBlock != null)
-                {
-                    string userInput = Microsoft.VisualBasic.Interaction.InputBox("Enter value:", "Input", "");
-                    if (!string.IsNullOrEmpty(userInput))
-                    {
-                        // 사용자 입력을 Rectangle의 채우기 색으로 설정
-                        rectangle.Fill = new SolidColorBrush(System.Windows.Media.Colors.Red); // 예시로 빨간색 설정
-                        textBlock.Text = userInput;
-                    }
-                }
-                // 입력 창을 표시하고 사용자 입력 처리
             }
         }
 

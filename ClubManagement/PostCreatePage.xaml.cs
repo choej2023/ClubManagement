@@ -110,10 +110,11 @@ namespace ClubManagement
                 }
 
                 // post 테이블에 게시글 저장
-                string query = "INSERT INTO post (ClubID, Title, Content, AuthorName, PostDate, FilePath) VALUES (@ClubID, @Title, @Content, @AuthorName, @PostDate, @FilePath)";
+                string query = "INSERT INTO post (ClubID, StudentID, Title, Content, AuthorName, PostDate, FilePath) VALUES (@ClubID, @StudentID, @Title, @Content, @AuthorName, @PostDate, @FilePath)";
                 using (MySqlCommand command = new MySqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@ClubID", clubId);
+                    command.Parameters.AddWithValue("@StudentID", sid);
                     command.Parameters.AddWithValue("@Title", title);
                     command.Parameters.AddWithValue("@Content", content);
                     command.Parameters.AddWithValue("@AuthorName", authorName); // 검색된 작성자 이름 사용

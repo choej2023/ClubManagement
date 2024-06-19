@@ -85,7 +85,7 @@ namespace ClubManagement
         {
             if (sender is ListView listView && listView.SelectedItem is Post selectedPost)
             {
-                OpenPage openPage = new OpenPage(selectedPost);
+                OpenPage openPage = new OpenPage(selectedPost, sid);
                 openPage.ShowDialog();
             }
         }

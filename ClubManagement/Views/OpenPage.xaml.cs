@@ -15,10 +15,11 @@ namespace ClubManagement.Views
     public partial class OpenPage : Window
     {
         private string filePath;
-        private int postId;
+        private Post post;
+        private int sid;
         private string selectedFilePath;
 
-        public OpenPage(Post post)
+        public OpenPage(Post post, int sid)
         {
             InitializeComponent();
             TitleTextBox.Text = post.Title;
@@ -26,7 +27,8 @@ namespace ClubManagement.Views
             DateTextBox.Text = post.PostDate.ToString("yyyy-MM-dd");
             ContentTextBox.Text = post.Content;
             filePath = post.FilePath;
-            postId = post.PostID;
+            this.post = post;
+            this.sid = sid;
 
             DisplayFile(filePath);
         }
@@ -74,6 +76,11 @@ namespace ClubManagement.Views
 
         private void EditButton_Click(object sender, RoutedEventArgs e)
         {
+            if (sid != post.StudentID)
+            {
+                MessageBox.Show("접근 권한이 없습니다!");
+                return;
+            }
             // TextBox를 편집 가능하게 설정
             TitleTextBox.IsReadOnly = false;
             ContentTextBox.IsReadOnly = false;
@@ -108,7 +115,7 @@ namespace ClubManagement.Views
             }
 
             // 데이터베이스 업데이트
-            UpdatePostInDatabase(postId, TitleTextBox.Text, ContentTextBox.Text, uploadedFilePath);
+            UpdatePostInDatabase(post.PostID, TitleTextBox.Text, ContentTextBox.Text, uploadedFilePath);
         }
 
         private void SelectFileButton_Click(object sender, RoutedEventArgs e)

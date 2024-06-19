@@ -11,6 +11,7 @@ namespace ClubManagement.Model
     {
         public int PostID { get; set; }
         public int ClubID { get; set; }
+        public int StudentID { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
         public string AuthorName { get; set; }
