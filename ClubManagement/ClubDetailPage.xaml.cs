@@ -114,15 +114,12 @@ namespace ClubManagement
             try
             {
                 UserCredential credential;
-                string credPath = $"token_{club.ClubID}.json";
+                string credPath = $"token_{club.ClubID}";
+                string tokenFilePath = System.IO.Path.Combine($"token_{club.ClubID}", $"Google.Apis.Auth.OAuth2.Responses.TokenResponse-{club.StudentID}");
 
-                // 자격 증명 파일이 존재하는지 확인
-                if (!File.Exists(credPath))
-                {
-                    MessageBox.Show("아직 달력이 구글 캘린더와 연동되지 않았습니다.");
-                    if (sid != club.StudentID)
-                        return;
-                }
+                // 인증 토큰 파일이 존재하는지 확인
+                if (!File.Exists(tokenFilePath))
+                    MessageBox.Show("아직 구글 캘린더와 연동되지 않았습니다.");
 
                 using (var stream = new FileStream("client_secret_921999378493-3mjcj8s7l020j6pfdlmlja5qi3h375ji.apps.googleusercontent.com.json", FileMode.Open, FileAccess.Read))
                 {
@@ -145,6 +142,9 @@ namespace ClubManagement
                 MessageBox.Show($"An error occurred: {ex.Message}");
             }
         }
+
+
+
 
         private async void EventCalendar_SelectedDatesChanged(object sender, SelectionChangedEventArgs e)
         {

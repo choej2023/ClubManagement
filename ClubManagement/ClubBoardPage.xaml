@@ -29,13 +29,13 @@
 
         <!-- 게시판 목록 -->
         <Grid Grid.Row="1">
-            <ListView ItemsSource="{Binding Posts}" >
+            <ListView ItemsSource="{Binding Posts}" MouseDoubleClick="Post_DoubleClick">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="번호" DisplayMemberBinding="{Binding Index}" Width="50"/>
+                        <GridViewColumn Header="번호" DisplayMemberBinding="{Binding PostID}" Width="50"/>
                         <GridViewColumn Header="제목" DisplayMemberBinding="{Binding Title}" Width="400"/>
-                        <GridViewColumn Header="작성자" DisplayMemberBinding="{Binding Author}" Width="150"/>
-                        <GridViewColumn Header="작성일" DisplayMemberBinding="{Binding DatePosted, StringFormat='yyyy-MM-dd'}" Width="150"/>
+                        <GridViewColumn Header="작성자" DisplayMemberBinding="{Binding AuthorName}" Width="150"/>
+                        <GridViewColumn Header="작성일" DisplayMemberBinding="{Binding PostDate, StringFormat='yyyy-MM-dd'}" Width="150"/>
                     </GridView>
                 </ListView.View>
             </ListView>

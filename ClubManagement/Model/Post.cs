@@ -15,7 +15,7 @@ namespace ClubManagement.Model
         public string Content { get; set; }
         public string AuthorName { get; set; }
         public DateTime PostDate { get; set; }
-        public string Attachment { get; set; }
+        public string FilePath { get; set; }
 
         // Navigation properties
         public Club Club { get; set; }
