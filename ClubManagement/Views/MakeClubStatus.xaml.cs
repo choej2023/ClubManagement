@@ -6,12 +6,10 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-
 
 namespace ClubManagement.Views
 {
@@ -19,6 +17,7 @@ namespace ClubManagement.Views
     {
         private HttpClient _httpClient;
         private int sid;
+
         public MakeClubStatus(int sid)
         {
             InitializeComponent();
@@ -49,8 +48,7 @@ namespace ClubManagement.Views
 
                 var options = new JsonSerializerOptions
                 {
-                    PropertyNameCaseInsensitive = true,
-                    Converters = { new IntToBoolConverter() }
+                    PropertyNameCaseInsensitive = true
                 };
 
                 var clubApplicationForms = JsonSerializer.Deserialize<List<ClubApplicationForm>>(responseBody, options);
@@ -79,8 +77,7 @@ namespace ClubManagement.Views
 
                         var statusTextBlock = new TextBlock
                         {
-                            Text = clubApplicationForm.isAccepted == true ? "승인됨" : 
-                            (clubApplicationForm.isAccepted == false ? "거절됨" : "검토 전"),
+                            Text = clubApplicationForm.TotalApprovals + " / " + clubApplicationForm.RequiredApprovals,
                             VerticalAlignment = VerticalAlignment.Center,
                             Margin = new Thickness(5)
                         };
@@ -118,22 +115,5 @@ namespace ClubManagement.Views
                 MessageBox.Show($"Unexpected error: {ex.Message}");
             }
         }
-
-    }
-}
-public class IntToBoolConverter : JsonConverter<bool>
-{
-    public override bool Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-    {
-        if (reader.TokenType == JsonTokenType.Number && reader.TryGetInt32(out int intValue))
-        {
-            return intValue != 0;
-        }
-        return false;
-    }
-
-    public override void Write(Utf8JsonWriter writer, bool value, JsonSerializerOptions options)
-    {
-        writer.WriteNumberValue(value ? 1 : 0);
     }
 }

@@ -225,11 +225,15 @@ namespace ClubManagement.Views
                     case "신설 신청 현황":
                         mainWindow.MainFrame.Navigate(new MakeClubStatus(sid)); // 신설 신청 현황 페이지로 이동
                         break;
+                    case "동아리 신설 신청 검토":
+                        mainWindow.MainFrame.Navigate(new ConfirmClubPage(sid)); // ConfirmClubPage로 이동
+                        break;
                 }
                 ClubMenu.SelectedItem = null;
                 ClubMenu.Visibility = Visibility.Collapsed; // 드롭다운 메뉴를 숨김
             }
         }
+
 
         private void ReLoad(object sender, RoutedEventArgs e)
         {

@@ -46,6 +46,7 @@
                   Margin="5">
                     <ComboBoxItem Content="동아리 신설 신청"/>
                     <ComboBoxItem Content="신설 신청 현황"/>
+                    <ComboBoxItem Content="동아리 신설 신청 검토"/>
                 </ComboBox>
             </StackPanel>
 
