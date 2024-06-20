@@ -54,12 +54,24 @@ namespace ClubManagement.Views
                 applicationGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
                 applicationGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
+                applicationGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                applicationGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                applicationGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
                 var nameTextBlock = new TextBlock
                 {
                     Text = applicationForm.Name,
                     VerticalAlignment = VerticalAlignment.Center,
                     FontSize = 14,
                     FontWeight = FontWeights.Bold,
+                    Margin = new Thickness(5)
+                };
+
+                var applicantNameTextBlock = new TextBlock
+                {
+                    Text = $"신청자: {applicationForm.ApplicantName}",
+                    VerticalAlignment = VerticalAlignment.Center,
+                    FontSize = 12,
                     Margin = new Thickness(5)
                 };
 
@@ -100,13 +112,22 @@ namespace ClubManagement.Views
                 // Grid에 요소 추가
                 Grid.SetColumn(nameTextBlock, 0);
                 Grid.SetRow(nameTextBlock, 0);
-                Grid.SetColumn(descriptionTextBlock, 1);
-                Grid.SetRow(descriptionTextBlock, 0);
-                Grid.SetColumn(buttonPanel, 2);
+                Grid.SetColumnSpan(nameTextBlock, 3);
+
+                Grid.SetColumn(applicantNameTextBlock, 0);
+                Grid.SetRow(applicantNameTextBlock, 1);
+                Grid.SetColumnSpan(applicantNameTextBlock, 3);
+
+                Grid.SetColumn(descriptionTextBlock, 0);
+                Grid.SetRow(descriptionTextBlock, 2);
+                Grid.SetColumnSpan(descriptionTextBlock, 3);
+
+                Grid.SetColumn(buttonPanel, 3);
                 Grid.SetRow(buttonPanel, 0);
-                Grid.SetColumnSpan(buttonPanel, 2); // 버튼 패널이 마지막 두 열을 차지하도록 설정
+                Grid.SetRowSpan(buttonPanel, 3);
 
                 applicationGrid.Children.Add(nameTextBlock);
+                applicationGrid.Children.Add(applicantNameTextBlock);
                 applicationGrid.Children.Add(descriptionTextBlock);
                 applicationGrid.Children.Add(buttonPanel);
 
@@ -148,7 +169,7 @@ namespace ClubManagement.Views
 
             if (applicationForm.StudentID == sid)
             {
-                MessageBox.Show("You cannot approve your own club application.");
+                MessageBox.Show("자신의 동아리 신청서를 승인하거나 거절할 수 없습니다.");
                 return;
             }
 
@@ -172,7 +193,7 @@ namespace ClubManagement.Views
 
             if (applicationForm.StudentID == sid)
             {
-                MessageBox.Show("You cannot reject your own club application.");
+                MessageBox.Show("자신의 동아리 신청서를 승인하거나 거절할 수 없습니다.");
                 return;
             }
 

@@ -3,25 +3,52 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:ClubManagement.Views"
         xmlns:converters="clr-namespace:ClubManagement.Converters"
-        Title="ClubApplicationFormDetails" Height="450" Width="800">
+        Title="동아리 신청서 상세 정보" Height="450" Width="800">
     <Window.Resources>
         <converters:BooleanToStringConverter x:Key="BooleanToStringConverter"/>
     </Window.Resources>
-    <Grid>
+    <Grid Margin="10">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Row="0" Orientation="Vertical" Margin="10">
-            <TextBlock Text="동아리 신청서 상세 정보" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
-            <TextBlock Text="{Binding Name}" FontSize="16" Margin="0,0,0,5"/>
-            <TextBlock Text="{Binding Department}" FontSize="16" Margin="0,0,0,5"/>
-            <TextBlock Text="{Binding Year}" FontSize="16" Margin="0,0,0,5"/>
-            <TextBlock Text="{Binding StudentNumber}" FontSize="16" Margin="0,0,0,5"/>
-            <TextBlock Text="{Binding MemberCount}" FontSize="16" Margin="0,0,0,5"/>
-            <TextBlock Text="{Binding isAccepted, Converter={StaticResource BooleanToStringConverter}}" FontSize="16" Margin="0,0,0,5"/>
-            <TextBlock Text="{Binding checkedDate}" FontSize="16" Margin="0,0,0,5"/>
-        </StackPanel>
+        <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="동아리 신청서 상세 정보" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="이름:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,0"/>
+        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Name}" FontSize="16" Margin="0,0,0,5"/>
+
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="학과:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,0"/>
+        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Department}" FontSize="16" Margin="0,0,0,5"/>
+
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="학년:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,0"/>
+        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Year}" FontSize="16" Margin="0,0,0,5"/>
+
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="학번:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,0"/>
+        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding StudentNumber}" FontSize="16" Margin="0,0,0,5"/>
+
+        <TextBlock Grid.Row="5" Grid.Column="0" Text="멤버 수:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,0"/>
+        <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding MemberCount}" FontSize="16" Margin="0,0,0,5"/>
+
+        <TextBlock Grid.Row="6" Grid.Column="0" Text="승인 날짜:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,0"/>
+        <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding checkedDate}" FontSize="16" Margin="0,0,0,5"/>
+
+        <TextBlock Grid.Row="7" Grid.Column="0" Text="추가 정보:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,0"/>
+        <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding AdditionalInfo}" FontSize="16" Margin="0,0,0,5"/>
+
+        <TextBlock Grid.Row="8" Grid.Column="0" Text="동아리 이름:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,0"/>
+        <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding ClubName}" FontSize="16" Margin="0,0,0,5"/>
     </Grid>
 </Window>
