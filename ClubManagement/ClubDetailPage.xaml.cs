@@ -238,7 +238,7 @@ namespace ClubManagement
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
                     connection.Open();
-                    string query = "SELECT * FROM events WHERE ClubID = @ClubID AND Start >= @StartDate AND Start < @EndDate";
+                    string query = "SELECT * FROM events WHERE ClubID = @ClubID AND (Start >= @StartDate AND Start < @EndDate) OR (End > @StartDate AND End <= @EndDate) OR (Start < @StartDate AND End > @EndDate)";
                     MySqlCommand command = new MySqlCommand(query, connection);
                     command.Parameters.AddWithValue("@ClubID", club.ClubID);
                     command.Parameters.AddWithValue("@StartDate", startDate);
@@ -272,6 +272,8 @@ namespace ClubManagement
         }
 
 
+
+
         private void AddEventButton_Click(object sender, RoutedEventArgs e)
         {
             if (club.StudentID != sid)
@@ -289,15 +291,24 @@ namespace ClubManagement
                 MessageBox.Show("접근 권한이 없습니다.");
                 return;
             }
-            if (EventListBox.SelectedItem is LocalEventWrapper selectedEventWrapper)
+            if (EventListBox.SelectedItem is EventWrapper selectedEventWrapper)
             {
-                AddOrEditEvent(selectedEventWrapper.Event);
+                if (selectedEventWrapper.IsLocal)
+                {
+                    AddOrEditEvent(selectedEventWrapper.LocalEvent);
+                }
+                else
+                {
+                    MessageBox.Show("Local event만 수정할 수 있습니다.");
+                }
             }
             else
             {
                 MessageBox.Show("Please select an event to edit.");
             }
         }
+
+
 
         private async void DeleteEventButton_Click(object sender, RoutedEventArgs e)
         {
@@ -322,6 +333,7 @@ namespace ClubManagement
             }
         }
 
+
         private void DeleteLocalEvent(LocalEvent localEvent)
         {
             try
@@ -333,7 +345,15 @@ namespace ClubManagement
                     string query = "DELETE FROM events WHERE Id = @Id";
                     MySqlCommand command = new MySqlCommand(query, connection);
                     command.Parameters.AddWithValue("@Id", localEvent.Id);
-                    command.ExecuteNonQuery();
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+                        MessageBox.Show("Event deleted successfully.");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Event deletion failed.");
+                    }
                 }
             }
             catch (Exception ex)
@@ -341,6 +361,7 @@ namespace ClubManagement
                 MessageBox.Show("Error deleting local event: " + ex.Message);
             }
         }
+
 
         private async void AddOrEditEvent(LocalEvent existingEvent)
         {
@@ -458,7 +479,15 @@ namespace ClubManagement
                     command.Parameters.AddWithValue("@Location", localEvent.Location);
                     command.Parameters.AddWithValue("@GoogleEventId", localEvent.GoogleEventId);
                     command.Parameters.AddWithValue("@Id", localEvent.Id);
-                    command.ExecuteNonQuery();
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+                        MessageBox.Show("Event updated successfully.");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Event update failed.");
+                    }
                 }
             }
             catch (Exception ex)
@@ -466,6 +495,7 @@ namespace ClubManagement
                 MessageBox.Show("Error updating local event: " + ex.Message);
             }
         }
+
 
 
         private void EventListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -512,6 +542,7 @@ namespace ClubManagement
                 return $"{Event.Summary} ({Event.Start.ToString("g")})";
             }
         }
+
 
         private void EditButton_Click(object sender, RoutedEventArgs e)
         {

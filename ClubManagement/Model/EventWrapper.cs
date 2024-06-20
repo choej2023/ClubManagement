@@ -1,9 +1,4 @@
 ﻿using Google.Apis.Calendar.v3.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClubManagement.Model
 {
@@ -29,7 +24,7 @@ namespace ClubManagement.Model
         {
             if (IsLocal)
             {
-                return $"{LocalEvent.Summary} ({LocalEvent.Start.ToString("g")})";
+                return $"{LocalEvent.Summary} ({LocalEvent.Start:g})";
             }
             else
             {
@@ -37,5 +32,4 @@ namespace ClubManagement.Model
             }
         }
     }
-
 }

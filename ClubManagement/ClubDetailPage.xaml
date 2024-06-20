@@ -76,7 +76,7 @@
                     <RowDefinition/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <Calendar Name="EventCalendar" SelectedDatesChanged="EventCalendar_SelectedDatesChanged" HorizontalAlignment="Center"/>
+                <Calendar x:Name="EventCalendar" SelectedDatesChanged="EventCalendar_SelectedDatesChanged" HorizontalAlignment="Center"/>
                 <ListBox Grid.Row="1" Name="EventListBox" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,10,0" SelectionChanged="EventListBox_SelectionChanged"/>
                 <TextBlock Grid.Row="2" Name="EventDetailsTextBlock" TextWrapping="Wrap" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                 <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,10,10">
