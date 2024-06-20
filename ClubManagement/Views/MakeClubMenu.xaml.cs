@@ -113,7 +113,7 @@ namespace ClubManagement.Views
                 fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("multipart/form-data");
                 content.Add(fileContent, "file", Path.GetFileName(filePath));
 
-                var response = await client.PostAsync($"{Properties.Settings.Default.serverUrl}/api/Files/upload", content);
+                var response = await client.PostAsync($"{Properties.Settings.Default.serverUrl}/api/files/upload", content);
                 if (response.IsSuccessStatusCode)
                 {
                     var result = await response.Content.ReadAsStringAsync();

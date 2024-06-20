@@ -33,27 +33,66 @@ namespace ClubManagement.Views
             DisplayFile(filePath);
         }
 
-        private void DisplayFile(string filePath)
+        private async Task<BitmapImage> LoadImageFromServerAsync(string fileName)
         {
-            if (string.IsNullOrEmpty(filePath))
+            string uri = $"{Properties.Settings.Default.serverUrl}/api/files/images/{fileName}";
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    HttpResponseMessage response = await client.GetAsync(uri);
+                    response.EnsureSuccessStatusCode();
+
+                    var imageData = await response.Content.ReadAsByteArrayAsync();
+
+                    BitmapImage bitmapImage = new BitmapImage();
+                    using (var stream = new MemoryStream(imageData))
+                    {
+                        stream.Seek(0, SeekOrigin.Begin);
+                        bitmapImage.BeginInit();
+                        bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmapImage.StreamSource = stream;
+                        bitmapImage.EndInit();
+                    }
+
+                    return bitmapImage;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"이미지를 불러오는 도중 오류가 발생했습니다: {ex.Message}");
+                return null;
+            }
+        }
+
+        private async void DisplayFile(string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName))
             {
                 return;
             }
 
-            string fileExtension = System.IO.Path.GetExtension(filePath).ToLower();
+            string fileExtension = System.IO.Path.GetExtension(fileName).ToLower();
 
             if (fileExtension == ".jpg" || fileExtension == ".jpeg" || fileExtension == ".png" || fileExtension == ".bmp")
             {
                 Image image = new Image();
-                BitmapImage bitmap = new BitmapImage(new Uri(filePath, UriKind.RelativeOrAbsolute));
-                image.Source = bitmap;
-                image.MaxHeight = 200;
-                FilePreviewBorder.Child = image;
+                BitmapImage bitmap = await LoadImageFromServerAsync(fileName);
+                if (bitmap != null)
+                {
+                    image.Source = bitmap;
+                    image.MaxHeight = 200;
+                    FilePreviewBorder.Child = image;
+                }
+                else
+                {
+                    MessageBox.Show("이미지를 불러오는 데 실패했습니다.");
+                }
             }
             else if (fileExtension == ".mp4" || fileExtension == ".avi" || fileExtension == ".mov" || fileExtension == ".wmv")
             {
                 MediaElement mediaElement = new MediaElement();
-                mediaElement.Source = new Uri(filePath, UriKind.RelativeOrAbsolute);
+                mediaElement.Source = new Uri($"{Properties.Settings.Default.serverUrl}/api/files/images/{fileName}", UriKind.Absolute);
                 mediaElement.LoadedBehavior = MediaState.Manual;
                 mediaElement.UnloadedBehavior = MediaState.Manual;
                 mediaElement.Height = 200;
@@ -63,14 +102,16 @@ namespace ClubManagement.Views
             else
             {
                 DownloadButton.Visibility = Visibility.Visible;
+                DownloadButton.Tag = $"{Properties.Settings.Default.serverUrl}/api/files/images/{fileName}"; // 다운로드 버튼에 파일 URL 저장
             }
         }
 
         private void DownloadButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(filePath))
+            if (DownloadButton.Tag != null)
             {
-                Process.Start(new ProcessStartInfo(filePath) { UseShellExecute = true });
+                string fileUrl = DownloadButton.Tag.ToString();
+                Process.Start(new ProcessStartInfo(fileUrl) { UseShellExecute = true });
             }
         }
 
@@ -108,14 +149,14 @@ namespace ClubManagement.Views
             SaveButton.Visibility = Visibility.Collapsed;
             EditButton.Visibility = Visibility.Visible;
 
-            string uploadedFilePath = filePath;
+            string uploadedFileName = filePath;
             if (!string.IsNullOrEmpty(selectedFilePath))
             {
-                uploadedFilePath = await UploadFileToServer(selectedFilePath);
+                uploadedFileName = await UploadFileToServer(selectedFilePath);
             }
 
             // 데이터베이스 업데이트
-            UpdatePostInDatabase(post.PostID, TitleTextBox.Text, ContentTextBox.Text, uploadedFilePath);
+            UpdatePostInDatabase(post.PostID, TitleTextBox.Text, ContentTextBox.Text, uploadedFileName);
         }
 
         private void SelectFileButton_Click(object sender, RoutedEventArgs e)
@@ -146,7 +187,7 @@ namespace ClubManagement.Views
                             {
                                 var responseContent = await response.Content.ReadAsStringAsync();
                                 dynamic result = Newtonsoft.Json.JsonConvert.DeserializeObject(responseContent);
-                                return result.filePath;
+                                return result.fileName; // 서버에서 반환된 파일 이름을 반환
                             }
                             else
                             {
@@ -159,7 +200,7 @@ namespace ClubManagement.Views
             }
         }
 
-        private void UpdatePostInDatabase(int postId, string title, string content, string filePath)
+        private void UpdatePostInDatabase(int postId, string title, string content, string fileName)
         {
             string connectionString = "Server=localhost;Database=clubmanagement;User ID=root;Password=root;";
 
@@ -172,7 +213,7 @@ namespace ClubManagement.Views
                     command.Parameters.AddWithValue("@PostID", postId);
                     command.Parameters.AddWithValue("@Title", title);
                     command.Parameters.AddWithValue("@Content", content);
-                    command.Parameters.AddWithValue("@FilePath", filePath);
+                    command.Parameters.AddWithValue("@FilePath", fileName); // 파일 이름만 저장
 
                     command.ExecuteNonQuery();
                 }

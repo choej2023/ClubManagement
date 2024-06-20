@@ -50,6 +50,7 @@ namespace ClubManagement
                                 Content = reader.GetString("Content"),
                                 AuthorName = reader.GetString("AuthorName"),
                                 PostDate = reader.GetDateTime("PostDate"),
+                                StudentID = reader.GetInt32("StudentID"),
                                 FilePath = reader["FilePath"] as string
                             });
                         }

@@ -238,7 +238,7 @@ namespace ClubManagement
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
                     connection.Open();
-                    string query = "SELECT * FROM events WHERE ClubID = @ClubID AND (Start >= @StartDate AND Start < @EndDate) OR (End > @StartDate AND End <= @EndDate) OR (Start < @StartDate AND End > @EndDate)";
+                    string query = "SELECT * FROM events WHERE ClubID = @ClubID AND (Start >= @StartDate AND Start < @EndDate) OR (End > @StartDate AND End <= @EndDate) OR (Start <= @StartDate AND End >= @EndDate)";
                     MySqlCommand command = new MySqlCommand(query, connection);
                     command.Parameters.AddWithValue("@ClubID", club.ClubID);
                     command.Parameters.AddWithValue("@StartDate", startDate);
@@ -288,18 +288,19 @@ namespace ClubManagement
             AddOrEditEvent(null);
         }
 
-        private void EditEventButton_Click(object sender, RoutedEventArgs e)
+        private async void EditEventButton_Click(object sender, RoutedEventArgs e)
         {
             if (club.StudentID != sid)
             {
                 MessageBox.Show("접근 권한이 없습니다.");
                 return;
             }
+
             if (EventListBox.SelectedItem is EventWrapper selectedEventWrapper)
             {
                 if (selectedEventWrapper.IsLocal)
                 {
-                    AddOrEditEvent(selectedEventWrapper.LocalEvent);
+                    await AddOrEditEvent(selectedEventWrapper.LocalEvent);
                 }
                 else
                 {
@@ -313,7 +314,6 @@ namespace ClubManagement
         }
 
 
-
         private async void DeleteEventButton_Click(object sender, RoutedEventArgs e)
         {
             if (club.StudentID != sid)
@@ -321,21 +321,43 @@ namespace ClubManagement
                 MessageBox.Show("접근 권한이 없습니다.");
                 return;
             }
-            if (EventListBox.SelectedItem is LocalEventWrapper selectedEventWrapper)
+
+            bool isDeleted = false;
+
+            if (EventListBox.SelectedItem is EventWrapper selectedEventWrapper)
             {
-                if (service != null && selectedEventWrapper.Event.GoogleEventId != null)
+                if (selectedEventWrapper.IsLocal)
                 {
-                    await service.Events.Delete("primary", selectedEventWrapper.Event.GoogleEventId).ExecuteAsync();
+                    if (service != null && !string.IsNullOrEmpty(selectedEventWrapper.LocalEvent.GoogleEventId))
+                    {
+                        await service.Events.Delete("primary", selectedEventWrapper.LocalEvent.GoogleEventId).ExecuteAsync();
+                        isDeleted = true;
+                    }
+                    DeleteLocalEvent(selectedEventWrapper.LocalEvent);
+                    isDeleted = true;
                 }
-                DeleteLocalEvent(selectedEventWrapper.Event);
-                MessageBox.Show("Event deleted.");
-                EventCalendar_SelectedDatesChanged(null, null); // Refresh the event list
+                else
+                {
+                    if (service != null && selectedEventWrapper.GoogleEvent != null)
+                    {
+                        await service.Events.Delete("primary", selectedEventWrapper.GoogleEvent.Id).ExecuteAsync();
+                        isDeleted = true;
+                    }
+                }
+
+                if (isDeleted)
+                {
+                    MessageBox.Show("Event deleted.");
+                    EventCalendar_SelectedDatesChanged(null, null); // Refresh the event list
+                }
             }
             else
             {
                 MessageBox.Show("Please select an event to delete.");
             }
         }
+
+
 
 
         private void DeleteLocalEvent(LocalEvent localEvent)
@@ -367,7 +389,10 @@ namespace ClubManagement
         }
 
 
-        private async void AddOrEditEvent(LocalEvent existingEvent)
+        private async 
+
+        Task
+AddOrEditEvent(LocalEvent existingEvent)
         {
             EventDialog dialog = new EventDialog();
 
@@ -394,15 +419,17 @@ namespace ClubManagement
                 newEvent.Description = dialog.DescriptionTextBox.Text;
                 newEvent.Location = dialog.LocationTextBox.Text;
 
+                bool isEventAddedOrUpdated = false;
+
                 if (existingEvent == null)
                 {
                     SaveLocalEvent(newEvent);
-                    MessageBox.Show("Event added.");
+                    isEventAddedOrUpdated = true;
                 }
                 else
                 {
                     UpdateLocalEvent(newEvent);
-                    MessageBox.Show("Event updated.");
+                    isEventAddedOrUpdated = true;
                 }
 
                 if (service != null)
@@ -428,11 +455,17 @@ namespace ClubManagement
                     }
 
                     UpdateLocalEvent(newEvent); // Update the local event with GoogleEventId
+                    isEventAddedOrUpdated = true;
                 }
 
-                EventCalendar_SelectedDatesChanged(null, null); // Refresh the event list
+                if (isEventAddedOrUpdated)
+                {
+                    MessageBox.Show(existingEvent == null ? "Event added." : "Event updated.");
+                    EventCalendar_SelectedDatesChanged(null, null); // Refresh the event list
+                }
             }
         }
+
 
 
 
