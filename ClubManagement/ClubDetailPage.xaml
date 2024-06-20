@@ -22,13 +22,14 @@
                 <Menu Grid.Row="0" VerticalAlignment="Top" FontSize="16" Height="60" Margin="70,0,61,0" Background="Transparent">
                     <Menu.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <UniformGrid Columns="4"/>
+                            <UniformGrid Columns="5"/>
                         </ItemsPanelTemplate>
                     </Menu.ItemsPanel>
                     <MenuItem Header="게시글" FontSize="16" HorizontalAlignment="Center" Click="ShowPosts_Click"/>
                     <MenuItem Header="부원 관리" FontSize="16" HorizontalAlignment="Center" Click="ShowMember_Click"/>
                     <MenuItem Header="수정" FontSize="16" HorizontalAlignment="Center" Click="EditButton_Click"/>
                     <MenuItem Header="삭제" FontSize="16" HorizontalAlignment="Center" Click="DeleteButton_Click"/>
+                    <MenuItem Header="회계 관리" FontSize="16" HorizontalAlignment="Center" Click="ManageFinance_Click"/>
                 </Menu>
                 <Button Width="80" Content="뒤로 가기" HorizontalAlignment="Right" Background="Transparent"
                         Click="Back_Button">

@@ -29,7 +29,7 @@ namespace ClubManagement.Views
         {
             try
             {
-                HttpResponseMessage response = await _httpClient.PostAsync($"{Properties.Settings.Default.serverUrl}/api/clubstatus", new StringContent(JsonSerializer.Serialize(new { sid }), System.Text.Encoding.UTF8, "application/json"));
+                HttpResponseMessage response = await _httpClient.PostAsync($"{Properties.Settings.Default.serverUrl}/api/otherclubstatus", null);
                 response.EnsureSuccessStatusCode();
 
                 string responseBody = await response.Content.ReadAsStringAsync();
@@ -42,7 +42,6 @@ namespace ClubManagement.Views
                 MessageBox.Show($"Request error: {ex.Message}");
             }
         }
-
         private void DisplayClubApplications(List<ClubApplicationForm> clubApplicationForms)
         {
             ClubApplicationStackPanel.Children.Clear();
@@ -218,5 +217,8 @@ namespace ClubManagement.Views
                 mainWindow.MainFrame.GoBack();
             }
         }
+
     }
+
 }
+

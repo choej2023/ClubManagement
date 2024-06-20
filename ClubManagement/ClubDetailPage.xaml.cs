@@ -271,7 +271,11 @@ namespace ClubManagement
             }
         }
 
-
+        private void ManageFinance_Click(object sender, RoutedEventArgs e)
+        {
+            var financeWindow = new FinanceManagementWindow(club);
+            financeWindow.Show();
+        }
 
 
         private void AddEventButton_Click(object sender, RoutedEventArgs e)
