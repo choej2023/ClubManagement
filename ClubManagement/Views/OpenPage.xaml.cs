@@ -22,6 +22,13 @@ namespace ClubManagement.Views
         public OpenPage(Post post, int sid)
         {
             InitializeComponent();
+            this.post = post;
+            this.sid = sid;
+            LoadData();
+        }
+
+        private void LoadData()
+        {
             TitleTextBox.Text = post.Title;
             TitleTextBox.IsReadOnly = true; // 읽기 전용 설정
             AuthorTextBox.Text = post.AuthorName;
@@ -31,15 +38,13 @@ namespace ClubManagement.Views
             ContentTextBox.Text = post.Content;
             ContentTextBox.IsReadOnly = true; // 읽기 전용 설정
             filePath = post.FilePath;
-            this.post = post;
-            this.sid = sid;
 
             DisplayFile(filePath);
         }
 
         private async Task<BitmapImage> LoadImageFromServerAsync(string fileName)
         {
-            string uri = $"{Properties.Settings.Default.serverUrl}/api/files/images/{fileName}";
+            string uri = $"{Properties.Settings.Default.serverUrl}/api/files/images/{Uri.EscapeDataString(fileName)}";
             try
             {
                 using (HttpClient client = new HttpClient())
@@ -161,6 +166,14 @@ namespace ClubManagement.Views
 
             // 데이터베이스 업데이트
             UpdatePostInDatabase(post.PostID, TitleTextBox.Text, ContentTextBox.Text, uploadedFileName);
+
+            // post 객체 업데이트
+            post.Title = TitleTextBox.Text;
+            post.Content = ContentTextBox.Text;
+            post.FilePath = uploadedFileName;
+
+            // 화면 새로고침
+            LoadData();
         }
 
         private void SelectFileButton_Click(object sender, RoutedEventArgs e)
@@ -190,8 +203,7 @@ namespace ClubManagement.Views
                             if (response.IsSuccessStatusCode)
                             {
                                 var responseContent = await response.Content.ReadAsStringAsync();
-                                dynamic result = Newtonsoft.Json.JsonConvert.DeserializeObject(responseContent);
-                                return result.fileName; // 서버에서 반환된 파일 이름을 반환
+                                return responseContent; // 서버에서 반환된 파일 이름을 반환
                             }
                             else
                             {

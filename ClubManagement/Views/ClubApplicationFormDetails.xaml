@@ -37,16 +37,13 @@
         <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Year}" FontSize="16" Margin="0,0,0,5"/>
 
         <TextBlock Grid.Row="4" Grid.Column="0" Text="학번:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,0"/>
-        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding StudentNumber}" FontSize="16" Margin="0,0,0,5"/>
-
-        <TextBlock Grid.Row="5" Grid.Column="0" Text="멤버 수:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,0"/>
-        <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding MemberCount}" FontSize="16" Margin="0,0,0,5"/>
+        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding studentNumber}" FontSize="16" Margin="0,0,0,5"/>
 
         <TextBlock Grid.Row="6" Grid.Column="0" Text="승인 날짜:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,0"/>
         <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding checkedDate}" FontSize="16" Margin="0,0,0,5"/>
 
         <TextBlock Grid.Row="7" Grid.Column="0" Text="추가 정보:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,0"/>
-        <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding AdditionalInfo}" FontSize="16" Margin="0,0,0,5"/>
+        <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding Description}" FontSize="16" Margin="0,0,0,5"/>
 
         <TextBlock Grid.Row="8" Grid.Column="0" Text="동아리 이름:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,0"/>
         <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding ClubName}" FontSize="16" Margin="0,0,0,5"/>

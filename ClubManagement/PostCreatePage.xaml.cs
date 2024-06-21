@@ -72,8 +72,7 @@ namespace ClubManagement
                             if (response.IsSuccessStatusCode)
                             {
                                 var responseContent = await response.Content.ReadAsStringAsync();
-                                dynamic result = Newtonsoft.Json.JsonConvert.DeserializeObject(responseContent);
-                                return result.filePath;
+                                return responseContent.Trim('"'); // 파일 이름 반환
                             }
                             else
                             {
@@ -85,6 +84,7 @@ namespace ClubManagement
                 }
             }
         }
+
 
         private void SavePostToDatabase(string title, string content, int clubId, string filePath)
         {

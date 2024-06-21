@@ -34,7 +34,6 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
             <TextBlock Text="학과 :" VerticalAlignment="Center" Margin="5"/>
@@ -48,10 +47,6 @@
 
             <TextBlock Text="이름 :" Grid.Row="3" VerticalAlignment="Center" Margin="5"/>
             <TextBox Grid.Row="3" Grid.Column="1" Margin="5" x:Name="NameTextBox"/>
-
-            <TextBlock Text="인원 수 :" Grid.Row="4" VerticalAlignment="Center" Margin="5"/>
-            <TextBox Grid.Row="4" Grid.Column="1" Margin="5" x:Name="MemberCountTextBox"/>
-
         </Grid>
 
         <!-- 동아리 신설 신청 버튼 -->

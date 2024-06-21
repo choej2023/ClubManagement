@@ -37,7 +37,7 @@ namespace ClubManagement.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("api/Files/images")]
+        [global::System.Configuration.DefaultSettingValueAttribute("api/files/images")]
         public string serverImages {
             get {
                 return ((string)(this["serverImages"]));
@@ -49,7 +49,7 @@ namespace ClubManagement.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("api/Files/upload")]
+        [global::System.Configuration.DefaultSettingValueAttribute("api/files/upload")]
         public string upload {
             get {
                 return ((string)(this["upload"]));

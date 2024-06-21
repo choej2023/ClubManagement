@@ -1,9 +1,12 @@
 ﻿using ClubManagement.Model;
 using ClubManagement.Models;
 using ClubManagement.Views;
+using Google;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Calendar.v3;
 using Google.Apis.Calendar.v3.Data;
+using Google.Apis.Oauth2.v2;
+using Google.Apis.Oauth2.v2.Data;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using MySqlConnector;
@@ -35,7 +38,7 @@ namespace ClubManagement
             this.club = club;
             this.sid = sId;
             Task task = LoadDataFromDatabaseAsync(); // 데이터베이스에서 데이터를 가져와서 Club 객체 생성 및 설정
-            InitializeGoogleCalendarService();
+            CheckGoogleCalendarSyncStatus();
         }
 
         private async Task LoadDataFromDatabaseAsync()
@@ -109,21 +112,39 @@ namespace ClubManagement
             }
         }
 
-        private async void InitializeGoogleCalendarService()
+        private async void CheckGoogleCalendarSyncStatus()
+        {
+            string credPath = $"token_{club.ClubID}";
+            string tokenFilePath = Path.Combine(credPath, $"Google.Apis.Auth.OAuth2.Responses.TokenResponse-{club.StudentID}");
+
+            if (File.Exists(tokenFilePath))
+            {
+                SyncAccountTextBlock.Text = "구글 캘린더와 동기화됨";
+            }
+            else
+            {
+                SyncAccountTextBlock.Text = "구글 캘린더와 동기화되지 않음";
+            }
+        }
+
+
+        private async void SyncButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (club.StudentID != sid)
+            {
+                MessageBox.Show("접근 권한이 없습니다!");
+                return;
+            }
+
+            await InitializeGoogleCalendarService();
+        }
+
+        private async Task InitializeGoogleCalendarService()
         {
             try
             {
                 UserCredential credential;
                 string credPath = $"token_{club.ClubID}";
-                string tokenFilePath = Path.Combine(credPath, $"Google.Apis.Auth.OAuth2.Responses.TokenResponse-{club.StudentID}");
-
-                // 인증 토큰 파일이 존재하는지 확인
-                if (!File.Exists(tokenFilePath))
-                {
-                    MessageBox.Show("아직 구글 캘린더와 연동되지 않았습니다.");
-                    if (club.StudentID != sid)
-                        return;
-                }
 
                 using (var stream = new FileStream("client_secret_921999378493-3mjcj8s7l020j6pfdlmlja5qi3h375ji.apps.googleusercontent.com.json", FileMode.Open, FileAccess.Read))
                 {
@@ -140,6 +161,10 @@ namespace ClubManagement
                     HttpClientInitializer = credential,
                     ApplicationName = ApplicationName,
                 });
+
+                SyncAccountTextBlock.Text = "구글 캘린더와 동기화됨";
+
+                MessageBox.Show("구글 캘린더와 동기화되었습니다.");
 
                 // 연동 후 로컬 데이터베이스의 이벤트들을 구글 캘린더로 업로드
                 await UploadLocalEventsToGoogleCalendar();
@@ -274,10 +299,9 @@ namespace ClubManagement
 
         private void ManageFinance_Click(object sender, RoutedEventArgs e)
         {
-            var financeWindow = new FinanceManagementWindow(club);
+            var financeWindow = new FinanceManagementWindow(club, sid);
             financeWindow.Show();
         }
-
 
         private void AddEventButton_Click(object sender, RoutedEventArgs e)
         {
@@ -306,7 +330,6 @@ namespace ClubManagement
                 MessageBox.Show("Please select an event to edit.");
             }
         }
-
 
         private async void DeleteEventButton_Click(object sender, RoutedEventArgs e)
         {
@@ -351,9 +374,6 @@ namespace ClubManagement
             }
         }
 
-
-
-
         private void DeleteLocalEvent(LocalEvent localEvent)
         {
             try
@@ -382,11 +402,7 @@ namespace ClubManagement
             }
         }
 
-
-        private async
-
-        Task
-AddOrEditEvent(LocalEvent existingEvent)
+        private async Task AddOrEditEvent(LocalEvent existingEvent)
         {
             EventDialog dialog = new EventDialog();
 
@@ -460,9 +476,6 @@ AddOrEditEvent(LocalEvent existingEvent)
             }
         }
 
-
-
-
         private void SaveLocalEvent(LocalEvent localEvent)
         {
             try
@@ -491,7 +504,6 @@ AddOrEditEvent(LocalEvent existingEvent)
                 MessageBox.Show("Error saving local event: " + ex.Message);
             }
         }
-
 
         private void UpdateLocalEvent(LocalEvent localEvent)
         {
@@ -527,8 +539,6 @@ AddOrEditEvent(LocalEvent existingEvent)
             }
         }
 
-
-
         private void EventListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (EventListBox.SelectedItem is EventWrapper selectedEventWrapper)
@@ -558,7 +568,6 @@ AddOrEditEvent(LocalEvent existingEvent)
             }
         }
 
-
         private class LocalEventWrapper
         {
             public LocalEventWrapper(LocalEvent eventItem)
@@ -573,7 +582,6 @@ AddOrEditEvent(LocalEvent existingEvent)
                 return $"{Event.Summary} ({Event.Start.ToString("g")})";
             }
         }
-
 
         private void EditButton_Click(object sender, RoutedEventArgs e)
         {
@@ -591,7 +599,7 @@ AddOrEditEvent(LocalEvent existingEvent)
             {
                 // 수정된 Club 객체로 DataContext 갱신
                 DataContext = modifyPage.ModifiedClub;
-
+                modifyPage.ModifiedClub.ClubID = club.ClubID;
                 // 데이터베이스 업데이트
                 UpdateDataInDatabase(modifyPage.ModifiedClub);
             }
@@ -658,7 +666,7 @@ AddOrEditEvent(LocalEvent existingEvent)
                     command.Parameters.AddWithValue("@ClubName", modifiedClub.ClubName);
                     command.Parameters.AddWithValue("@ShortDescription", modifiedClub.ShortDescription);
                     command.Parameters.AddWithValue("@Description", modifiedClub.Description);
-                    command.Parameters.AddWithValue("@ClubID", club.ClubID);
+                    command.Parameters.AddWithValue("@ClubID", modifiedClub.ClubID);
                     int rowsAffected = command.ExecuteNonQuery();
                     if (rowsAffected > 0)
                     {

@@ -29,6 +29,22 @@ namespace ClubManagement.Views
 
         private async void SubmitApplication_Click(object sender, RoutedEventArgs e)
         {
+            // 모든 필드가 입력되었는지 확인
+            if (string.IsNullOrWhiteSpace(DepartmentTextBox.Text) ||
+                string.IsNullOrWhiteSpace(YearTextBox.Text) ||
+                string.IsNullOrWhiteSpace(StudentNumberTextBox.Text) ||
+                string.IsNullOrWhiteSpace(NameTextBox.Text))
+            {
+                MessageBox.Show("모든 필드를 입력해주세요.");
+                return;
+            }
+
+            if (!int.TryParse(YearTextBox.Text, out _))
+            {
+                MessageBox.Show("년도와 최대 인원 수는 숫자여야 합니다.");
+                return;
+            }
+
             var applicationForm = new ClubApplicationForm
             {
                 StudentID = club.StudentID,
@@ -36,11 +52,9 @@ namespace ClubManagement.Views
                 Year = int.Parse(YearTextBox.Text),
                 StudentNumber = StudentNumberTextBox.Text,
                 Name = NameTextBox.Text,
-                MemberCount = int.Parse(MemberCountTextBox.Text),
             };
 
             // 동아리 신설 신청서 제출 로직 (백엔드와 통신하여 데이터 저장)
-
             try
             {
                 // 클럽 정보를 서버에 업로드
@@ -82,6 +96,7 @@ namespace ClubManagement.Views
                 MessageBox.Show($"Request error: {ex.Message}");
             }
         }
+
         public async Task SaveChairmanCredentialsAsync(Club club)
         {
             try

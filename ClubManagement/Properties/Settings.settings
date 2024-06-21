@@ -6,10 +6,10 @@
       <Value Profile="(Default)">http://localhost:5189</Value>
     </Setting>
     <Setting Name="serverImages" Type="System.String" Scope="User">
-      <Value Profile="(Default)">api/Files/images</Value>
+      <Value Profile="(Default)">api/files/images</Value>
     </Setting>
     <Setting Name="upload" Type="System.String" Scope="User">
-      <Value Profile="(Default)">api/Files/upload</Value>
+      <Value Profile="(Default)">api/files/upload</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -7,7 +7,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using ClubManagement.Models;
-using ClubManagement.Model;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Util.Store;
 using Google.Apis.Calendar.v3;
@@ -50,7 +49,7 @@ namespace ClubManagement.Views
                 ShortDescription = ShortDescriptionTextBox.Text,
                 Description = DescriptionTextBox.Text,
                 maxCount = int.Parse(MaxCountTextBox.Text),
-                ImagePath = _uploadedImagePath,  // 업로드된 이미지 경로 저장
+                ImagePath = _uploadedImagePath  // 업로드된 이미지 경로 저장 (이미지가 없으면 null)
             };
 
             // 다음 페이지로 이동
@@ -126,8 +125,5 @@ namespace ClubManagement.Views
                 }
             }
         }
-
-        
-
     }
 }

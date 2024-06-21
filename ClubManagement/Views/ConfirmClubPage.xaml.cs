@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -29,7 +30,8 @@ namespace ClubManagement.Views
         {
             try
             {
-                HttpResponseMessage response = await _httpClient.PostAsync($"{Properties.Settings.Default.serverUrl}/api/otherclubstatus", null);
+                var content = new StringContent(JsonSerializer.Serialize(new { sid }), Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await _httpClient.PostAsync($"{Properties.Settings.Default.serverUrl}/api/clubstatus", content);
                 response.EnsureSuccessStatusCode();
 
                 string responseBody = await response.Content.ReadAsStringAsync();
@@ -42,6 +44,7 @@ namespace ClubManagement.Views
                 MessageBox.Show($"Request error: {ex.Message}");
             }
         }
+
         private void DisplayClubApplications(List<ClubApplicationForm> clubApplicationForms)
         {
             ClubApplicationStackPanel.Children.Clear();
@@ -59,7 +62,7 @@ namespace ClubManagement.Views
 
                 var nameTextBlock = new TextBlock
                 {
-                    Text = applicationForm.Name,
+                    Text = applicationForm.ClubName,
                     VerticalAlignment = VerticalAlignment.Center,
                     FontSize = 14,
                     FontWeight = FontWeights.Bold,
@@ -68,7 +71,7 @@ namespace ClubManagement.Views
 
                 var applicantNameTextBlock = new TextBlock
                 {
-                    Text = $"신청자: {applicationForm.ApplicantName}",
+                    Text = $"신청자: {applicationForm.Name}",
                     VerticalAlignment = VerticalAlignment.Center,
                     FontSize = 12,
                     Margin = new Thickness(5)
@@ -174,10 +177,13 @@ namespace ClubManagement.Views
 
             try
             {
-                var response = await _httpClient.PutAsync($"{Properties.Settings.Default.serverUrl}/api/approvals/{applicationForm.StudentID}/{applicationForm.ClubID}/approve", null);
+                var content = new StringContent($"{{ \"sid\": {sid} }}", Encoding.UTF8, "application/json");
+                var response = await _httpClient.PutAsync($"{Properties.Settings.Default.serverUrl}/api/approvals/{applicationForm.StudentID}/{applicationForm.ClubID}/approve", content);
                 response.EnsureSuccessStatusCode();
 
-                LoadClubApplications();
+                // 승인된 신청서 항목 제거
+                var border = FindParent<Border>(button);
+                ClubApplicationStackPanel.Children.Remove(border);
             }
             catch (HttpRequestException ex)
             {
@@ -198,10 +204,13 @@ namespace ClubManagement.Views
 
             try
             {
-                var response = await _httpClient.PutAsync($"{Properties.Settings.Default.serverUrl}/api/approvals/{applicationForm.StudentID}/{applicationForm.ClubID}/reject", null);
+                var content = new StringContent($"{{ \"sid\": {sid} }}", Encoding.UTF8, "application/json");
+                var response = await _httpClient.PutAsync($"{Properties.Settings.Default.serverUrl}/api/approvals/{applicationForm.StudentID}/{applicationForm.ClubID}/reject", content);
                 response.EnsureSuccessStatusCode();
 
-                LoadClubApplications();
+                // 거절된 신청서 항목 제거
+                var border = FindParent<Border>(button);
+                ClubApplicationStackPanel.Children.Remove(border);
             }
             catch (HttpRequestException ex)
             {
@@ -218,7 +227,13 @@ namespace ClubManagement.Views
             }
         }
 
+        // 부모 요소를 찾는 헬퍼 메서드
+        private T FindParent<T>(DependencyObject child) where T : DependencyObject
+        {
+            DependencyObject parentObject = VisualTreeHelper.GetParent(child);
+            if (parentObject == null) return null;
+            if (parentObject is T parent) return parent;
+            return FindParent<T>(parentObject);
+        }
     }
-
 }
-
