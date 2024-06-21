@@ -14,8 +14,6 @@ namespace ClubManagement.Models
         public string ClubName { get; set; }
         public string ShortDescription { get; set; }
         public string Description { get; set; }
-        public DateTime? PromotionStartDate { get; set; }
-        public DateTime? PromotionEndDate { get; set; }
         public int maxCount { get; set; }
         public int count { get; set; }
 

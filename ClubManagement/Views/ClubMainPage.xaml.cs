@@ -92,6 +92,7 @@ namespace ClubManagement.Views
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
                 return null;
             }
         }

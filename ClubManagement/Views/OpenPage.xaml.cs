@@ -23,9 +23,13 @@ namespace ClubManagement.Views
         {
             InitializeComponent();
             TitleTextBox.Text = post.Title;
+            TitleTextBox.IsReadOnly = true; // 읽기 전용 설정
             AuthorTextBox.Text = post.AuthorName;
+            AuthorTextBox.IsReadOnly = true; // 읽기 전용 설정
             DateTextBox.Text = post.PostDate.ToString("yyyy-MM-dd");
+            DateTextBox.IsReadOnly = true; // 읽기 전용 설정
             ContentTextBox.Text = post.Content;
+            ContentTextBox.IsReadOnly = true; // 읽기 전용 설정
             filePath = post.FilePath;
             this.post = post;
             this.sid = sid;

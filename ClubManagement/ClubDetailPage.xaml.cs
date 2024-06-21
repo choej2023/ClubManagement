@@ -34,7 +34,7 @@ namespace ClubManagement
             _httpClient = new HttpClient();
             this.club = club;
             this.sid = sId;
-            LoadDataFromDatabaseAsync(); // 데이터베이스에서 데이터를 가져와서 Club 객체 생성 및 설정
+            Task task = LoadDataFromDatabaseAsync(); // 데이터베이스에서 데이터를 가져와서 Club 객체 생성 및 설정
             InitializeGoogleCalendarService();
         }
 
@@ -104,6 +104,7 @@ namespace ClubManagement
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return null;
             }
         }
@@ -285,7 +286,7 @@ namespace ClubManagement
                 MessageBox.Show("접근 권한이 없습니다.");
                 return;
             }
-            AddOrEditEvent(null);
+            Task task = AddOrEditEvent(null);
         }
 
         private async void EditEventButton_Click(object sender, RoutedEventArgs e)
@@ -297,16 +298,9 @@ namespace ClubManagement
             }
 
             if (EventListBox.SelectedItem is EventWrapper selectedEventWrapper)
-            {
-                if (selectedEventWrapper.IsLocal)
-                {
-                    await AddOrEditEvent(selectedEventWrapper.LocalEvent);
-                }
-                else
-                {
-                    MessageBox.Show("Local event만 수정할 수 있습니다.");
-                }
-            }
+
+                await AddOrEditEvent(selectedEventWrapper.LocalEvent);
+
             else
             {
                 MessageBox.Show("Please select an event to edit.");
@@ -389,7 +383,7 @@ namespace ClubManagement
         }
 
 
-        private async 
+        private async
 
         Task
 AddOrEditEvent(LocalEvent existingEvent)
